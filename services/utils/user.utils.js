@@ -2,7 +2,7 @@ const { BadRequestError, InternalServerError } = require('../../errors');
 
 function validateUser({ user }) {
     if (!user)
-        throw new InternalServerError('User is not defined');
+        throw new BadRequestError('User is not defined');
     if (!validateEmail(user.email))
         throw new BadRequestError('Email is not valid');
     if (!validatePassword(user.password))
