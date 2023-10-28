@@ -1,6 +1,6 @@
 const express = require('express');
 const authRouter = require("./auth.route");
-const userRouter = require("./user.route");
+const individualRouter = require("./individual.route");
 const fileRouter = require("./file.route");
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get('/', function (req, res, next) {
     });
 });
 
-router.use('/users', userRouter);
+router.use('/individuals', individualRouter);
 router.use('/auth', authRouter);
 router.use('/files', fileRouter);
 
