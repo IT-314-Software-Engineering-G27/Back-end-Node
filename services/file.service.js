@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
-const { BadRequestError } = require('../errors');
-const multer = require('multer');
 
 async function uploadFile({ file }) {
     const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'storage' });
