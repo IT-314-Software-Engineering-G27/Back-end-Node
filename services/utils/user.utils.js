@@ -24,13 +24,13 @@ function transformInputToUser({ user }) {
 
 function validateEmail(email) {
     if (!email)
-        return false;
+        return true;
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function validatePassword(password) {
     if (!password)
-        return false;
+        return true;
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 }
 
