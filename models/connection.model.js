@@ -18,10 +18,15 @@ const ConnectionSchema = new Schema({
         enum: ["pending", "accepted", "rejected"],
         default: "pending",
     },
-    messages: [{
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-    }],
+    messages: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: "Message",
+        }],
+        default: [],
+    }
 });
 
 const ConnectionModel = mongoose.models["Connection"] ?? mongoose.model("Connection", ConnectionSchema);
+
+module.exports = ConnectionModel;
