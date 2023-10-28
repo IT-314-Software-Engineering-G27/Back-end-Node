@@ -1,6 +1,7 @@
 const { BadRequestError } = require('../errors');
 const UserModel = require('../models/user.model');
 const bcrypt = require('bcrypt');
+
 async function listUsers() {
     return (await UserModel.find({}, {
         _id: 1
@@ -10,15 +11,11 @@ async function listUsers() {
 async function createUser({ user }) {
     user.password = await bcrypt.hash(user.password, 10);
     try {
-        return await UserModel.create({
-            email: user.email,
-            password: user.password,
-        });
+        return await UserModel.create(user);
     }
     catch (error) {
-        if (error.code === 11000) {
+        if (error.code === 11000)
             throw new BadRequestError('User already exists');
-        }
         throw error;
     }
 }
@@ -30,17 +27,14 @@ async function getUser({ id }) {
 }
 
 async function updateUser({ id, user }) {
-    user.password = await bcrypt.hash(user.password, 10);
+    if (user.password)
+        user.password = await bcrypt.hash(user.password, 10);
     try {
-        return await UserModel.findByIdAndUpdate(id, {
-            email: user.email,
-            password: user.password,
-        }, { new: true }).exec();
+        return await UserModel.findByIdAndUpdate(id, user, { new: true }).exec();
     }
     catch (error) {
-        if (error.code === 11000) {
+        if (error.code === 11000)
             throw new BadRequestError('User already exists');
-        }
         throw error;
     }
 }
