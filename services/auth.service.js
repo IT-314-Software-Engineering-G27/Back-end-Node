@@ -38,6 +38,8 @@ const createToken = async ({ email, password }) => {
             user: {
                 _id: user._id,
                 email: user.email,
+                individual: user.individual ?? null,
+                organization: user.organization ?? null,
             }
         }, secret, {
             expiresIn
