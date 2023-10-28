@@ -33,10 +33,11 @@ const indexRouter = require('./routes/index');
 app.use('/', indexRouter);
 
 app.use(function (req, res, next) {
-    next(new NotFoundError('Route not found'));
+    next(new NotFoundError('Invalid route'));
 });
 
 app.use(function (error, req, res, next) {
+    console.log(error);
     res.locals.message = error.message;
     res.locals.error = req.app.get('env') === 'development' ? error : {};
     res.status(error.status || 500).json({
