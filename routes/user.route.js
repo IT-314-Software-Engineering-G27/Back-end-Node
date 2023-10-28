@@ -1,12 +1,12 @@
 const express = require('express');
-const router = express.Router();
+const userRouter = express.Router();
 const UserController = require('../controllers/user.controller');
 const { tokenToIDMiddleware } = require('../middlewares/auth.middleware');
 
-router.post('/', UserController.create);
-router.get('/', UserController.list);
-router.get('/:id', UserController.get);
-router.put('/', tokenToIDMiddleware, UserController.update);
-router.delete('/', tokenToIDMiddleware, UserController.delete);
+userRouter.post('/', UserController.create);
+userRouter.get('/', UserController.list);
+userRouter.get('/:id', UserController.get);
+userRouter.put('/', tokenToIDMiddleware, UserController.update);
+userRouter.delete('/', tokenToIDMiddleware, UserController.delete);
 
-module.exports = router;
+module.exports = userRouter;
