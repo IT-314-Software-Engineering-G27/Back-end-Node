@@ -1,6 +1,8 @@
 const express = require('express');
 const authRouter = require("./auth.route");
 const individualRouter = require("./individual.route");
+const organizationRouter = require('./organization.route');
+const jobProfileRouterRouter = require('./job_profile.route');
 const fileRouter = require("./file.route");
 const router = express.Router();
 
@@ -16,8 +18,10 @@ router.get('/', function (req, res, next) {
 });
 
 router.use('/individuals', individualRouter);
+router.use('/organizations', organizationRouter);
 router.use('/auth', authRouter);
 router.use('/files', fileRouter);
+router.use('/jobProfile', jobProfileRouterRouter);
 
 
 module.exports = router;
