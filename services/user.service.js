@@ -9,7 +9,8 @@ async function listUsers() {
 }
 
 async function createUser({ user }) {
-    user.password = await bcrypt.hash(user.password, 10);
+    if (user.password)
+        user.password = await bcrypt.hash(user.password, 10);
     try {
         return await UserModel.create(user);
     }
@@ -20,17 +21,17 @@ async function createUser({ user }) {
     }
 }
 
-async function getUser({ id }) {
-    return await UserModel.findById(id, {
+async function getUser({ userId }) {
+    return await UserModel.findById(userId, {
         password: 0
     }).exec();
 }
 
-async function updateUser({ id, user }) {
+async function updateUser({ userId, user }) {
     if (user.password)
         user.password = await bcrypt.hash(user.password, 10);
     try {
-        return await UserModel.findByIdAndUpdate(id, user, { new: true }).exec();
+        return await UserModel.findByIdAndUpdate(userId, user, { new: true }).exec();
     }
     catch (error) {
         if (error.code === 11000)
@@ -39,8 +40,8 @@ async function updateUser({ id, user }) {
     }
 }
 
-async function deleteUser({ id }) {
-    return await UserModel.findByIdAndDelete(id).exec();
+async function deleteUser({ userId }) {
+    return await UserModel.findByIdAndDelete(userId).exec();
 }
 
 module.exports = {

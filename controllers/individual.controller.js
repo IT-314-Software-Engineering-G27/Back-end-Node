@@ -36,7 +36,7 @@ const IndividualController = {
     get: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const individual = await getIndividual({ id });
+            const individual = await getIndividual({ individualId: id });
             res.json({
                 message: "Fetched individual successfully",
                 payload: {
@@ -50,7 +50,7 @@ const IndividualController = {
     getBasic: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const individual = await getIndividualBasic({ id });
+            const individual = await getIndividualBasic({ individualId: id });
             res.json({
                 message: "Fetched individual successfully",
                 payload: {
@@ -63,8 +63,7 @@ const IndividualController = {
     },
     getProfile: async (req, res, next) => {
         try {
-            const { id } = req.user;
-            const individual = await getIndividualProfile({ id: req.user.individual });
+            const individual = await getIndividualProfile({ individualId: req.user.individual });
             res.json({
                 message: "Fetched individual successfully",
                 payload: {
