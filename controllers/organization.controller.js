@@ -103,11 +103,11 @@ const OrganizationController = {
     },
     getJobProfiles: async (req, res, next) => {
         try {
-            const profiles = await getJobProfiles(({ organizationId: req.user.organization }));
+            const jobProfiles = await getJobProfiles(({ organizationId: req.user.organization }));
             res.json({
                 message: "Fetched job profiles successfully",
                 payload: {
-                    profiles: profiles,
+                    jobProfiles: jobProfiles,
                 }
             });
         } catch (error) {
