@@ -4,6 +4,16 @@ const OrganizationModel = require('../models/organization.model');
 const UserModel = require('../models/user.model');
 
 async function listOrganizations({ query, page, limit }) {
+    if (query.length <= 3) {
+        return (await OrganizationModel.find({
+            $or: [
+                { company_name: { $regex: `^${query}`, $options: 'i', } },
+                { CEOname: { $regex: `^${query}`, $options: 'i', }, },
+            ],
+        }, {
+            _id: 1,
+        }).skip(page * limit).limit(limit).exec()).map((organization) => organization._id);
+    }
     return (await OrganizationModel.find({ $text: { $search: query } }, {
         score: {
             $meta: 'textScore',
