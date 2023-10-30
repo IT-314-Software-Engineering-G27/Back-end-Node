@@ -100,15 +100,17 @@ async function updateOrganization({ user, organization }) {
 }
 
 async function getEvents({ organizationId }) {
-    return await OrganizationModel.findById(organizationId, {
+    const { events } = await OrganizationModel.findById(organizationId, {
         events: 1,
     }).exec();
+    return events.map((event) => event.toString());
 }
 
 async function getJobProfiles({ organizationId }) {
-    return await OrganizationModel.findById(organizationId, {
+    const { job_profiles } = await OrganizationModel.findById(organizationId, {
         job_profiles: 1,
     }).exec();
+    return job_profiles.map((job_profile) => job_profile.toString());
 }
 
 async function addEvent({ organizationId, eventId }) {
