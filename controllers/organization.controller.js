@@ -49,7 +49,7 @@ const OrganizationController = {
     get: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const organization = await getOrganization({ id });
+            const organization = await getOrganization({ organizationId: id });
             res.json({
                 message: "Fetched organization successfully",
                 payload: {
@@ -63,7 +63,7 @@ const OrganizationController = {
     getBasic: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const organization = await getOrganizationBasic({ id });
+            const organization = await getOrganizationBasic({ organizationId: id });
             res.json({
                 message: "Fetched organization successfully",
                 payload: {
@@ -77,7 +77,7 @@ const OrganizationController = {
     getProfile: async (req, res, next) => {
         try {
             const { id } = req.user;
-            const organization = await getOrganizationProfile({ id: req.user.organization });
+            const organization = await getOrganizationProfile({ organizationId: req.user.organization });
             res.json({
                 message: "Fetched organization successfully",
                 payload: {
@@ -90,8 +90,7 @@ const OrganizationController = {
     },
     getEvents: async (req, res, next) => {
         try {
-            const { id } = req.user;
-            const events = await getEvents(({ id: req.user.organization }));
+            const events = await getEvents(({ organizationId: req.user.organization }));
             res.json({
                 message: "Fetched events successfully",
                 payload: {
@@ -104,8 +103,7 @@ const OrganizationController = {
     },
     getJobProfiles: async (req, res, next) => {
         try {
-            const { id } = req.user;
-            const profiles = await getJobProfiles(({ id: req.user.organization }));
+            const profiles = await getJobProfiles(({ organizationId: req.user.organization }));
             res.json({
                 message: "Fetched job profiles successfully",
                 payload: {

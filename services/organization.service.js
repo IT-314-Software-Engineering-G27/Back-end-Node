@@ -16,7 +16,7 @@ async function listOrganizations({ query, page, limit }) {
     }).skip(page * limit).limit(limit).exec()).map((organization) => organization._id);
 }
 
-async function createOrganization({organization}){
+async function createOrganization({ organization }) {
     const user = await createUser({ user: organization.user });
     organization.user = user._id;
     try {
@@ -25,7 +25,7 @@ async function createOrganization({organization}){
         return organization;
     }
     catch (error) {
-        await deleteUser({ id: user._id });
+        await deleteUser({ userId: user._id });
         if (error.code === 11000)
             throw new BadRequestError('User already exists');
         else
@@ -33,10 +33,10 @@ async function createOrganization({organization}){
     }
 }
 
-async function getOrganization({id}){
-    return await OrganizationModel.findById(id, {
+async function getOrganization({ organizationId }) {
+    return await OrganizationModel.findById(organizationId, {
         job_profiles: 0,
-        events:0,
+        events: 0,
     }).populate({
         path: 'user',
         select: {
@@ -47,8 +47,8 @@ async function getOrganization({id}){
     }).exec();
 }
 
-async function getOrganizationBasic({ id }) {
-    return await OrganizationModel.findById(id, {
+async function getOrganizationBasic({ organizationId }) {
+    return await OrganizationModel.findById(organizationId, {
         company_name: 1,
         CEOname: 1,
         user: 1,
@@ -62,8 +62,8 @@ async function getOrganizationBasic({ id }) {
     }).exec();
 }
 
-async function getOrganizationProfile({ id }) {
-    return await OrganizationModel.findById(id).populate({
+async function getOrganizationProfile({ organizationId }) {
+    return await OrganizationModel.findById(organizationId).populate({
         path: 'user',
         select: {
             password: 0,
@@ -74,14 +74,14 @@ async function getOrganizationProfile({ id }) {
 }
 
 async function deleteOrganization({ user }) {
-    await deleteUser({ id: user._id });
+    await deleteUser({ userId: user._id });
     return await OrganizationModel.findByIdAndDelete(user.organization).exec();
 }
 
 async function updateOrganization({ user, organization }) {
     try {
-        if (organization.user) 
-            await updateUser({ id: user._id, user: organization.user });
+        if (organization.user)
+            await updateUser({ userId: user._id, user: organization.user });
         organization.user = user._id;
         return await OrganizationModel.findByIdAndUpdate(user.organization, organization, { new: true }).exec();
     } catch (error) {
@@ -89,33 +89,36 @@ async function updateOrganization({ user, organization }) {
     }
 }
 
-async function getEvents({id}){
-    return await OrganizationModel.findById(id, {
-        events:1,
+async function getEvents({ organizationId }) {
+    return await OrganizationModel.findById(organizationId, {
+        events: 1,
     }).exec();
 }
 
-async function getJobProfiles({id}){
-    return await OrganizationModel.findById(id, {
-        job_profiles:1,
+async function getJobProfiles({ organizationId }) {
+    return await OrganizationModel.findById(organizationId, {
+        job_profiles: 1,
     }).exec();
 }
 
-async function addEvent({id,event_id}){
-    org_events=OrganizationModel.findById(id,{
-        events:1
+async function addEvent({ organizationId, eventId }) {
+    return await OrganizationModel.findByIdAndUpdate(organizationId, {
+        $push: {
+            events: eventId,
+        },
+    }, {
+        new: true,
     }).exec();
-
-    org_events.unshift(event_id);
-    console.log("Event added");
 }
 
-async function addJobProfile({id,job_id}){
-    org_job_profile=OrganizationModel.findById(id,{
-        job_profiles:1
+async function addJobProfile({ organizationId, jobProfileId }) {
+    await OrganizationModel.findByIdAndUpdate(organizationId, {
+        $push: {
+            job_profiles: jobProfileId,
+        },
+    }, {
+        new: true,
     }).exec();
-
-    org_job_profile.unshift(job_id);
     console.log("Job profile added");
 }
 

@@ -10,7 +10,7 @@ organizationRouter.get('/:id', OrganizationController.get);
 organizationRouter.get('/:id/basic', OrganizationController.getBasic);
 organizationRouter.put('/', tokenToIDMiddleware, OrganizationController.update);
 organizationRouter.delete('/', tokenToIDMiddleware, OrganizationController.delete);
-organizationRouter.get('/:id/events', tokenToIDMiddleware, OrganizationController.getEvents);
-organizationRouter.get('/:id/jobProfiles', tokenToIDMiddleware, OrganizationController.getJobProfiles);
+organizationRouter.get('/events', tokenToIDMiddleware, OrganizationController.getEvents);
+organizationRouter.get('/job-profiles', tokenToIDMiddleware, OrganizationController.getJobProfiles);
 
 module.exports = organizationRouter;
