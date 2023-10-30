@@ -3,7 +3,8 @@ const { validateUser, transformInputToUser } = require("./user.utils");
 
 function validateIndividual({ individual }) {
     if (!individual) throw new Error('Individual is required');
-    validateUser({ user: individual.user });
+    if (individual.user)
+        validateUser({ user: individual.user });
 };
 
 function transformInputToIndividual({ individual }) {
