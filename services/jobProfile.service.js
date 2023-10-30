@@ -35,9 +35,12 @@ async function createJobProfile({ jobProfile, organizationId }) {
 }
 
 async function updateJobProfile({ jobProfileId, jobProfile }) {
-    return await JobProfileModel.findByIdAndUpdate(jobProfileId, {
+    const newJobProfile = await JobProfileModel.findByIdAndUpdate(jobProfileId, {
         ...jobProfile,
+    }, {
+        new: true,
     }).exec();
+    return newJobProfile;
 }
 
 async function getJobProfileBasic({ jobProfileId }) {
