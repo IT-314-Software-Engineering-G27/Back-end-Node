@@ -2,7 +2,7 @@ const express = require('express');
 const authRouter = require("./auth.route");
 const individualRouter = require("./individual.route");
 const organizationRouter = require('./organization.route');
-const jobProfileRouter = require('./job_profile.route');
+const jobProfileRouter = require('./jobProfile.route');
 const fileRouter = require("./file.route");
 const connectionRouter = require("./connection.route");
 const router = express.Router();
@@ -22,7 +22,7 @@ router.use('/individuals', individualRouter);
 router.use('/organizations', organizationRouter);
 router.use('/auth', authRouter);
 router.use('/files', fileRouter);
-router.use('/job-profile', jobProfileRouter);
+router.use('/job-profiles', jobProfileRouter);
 router.use('/connections', connectionRouter);
 
 
