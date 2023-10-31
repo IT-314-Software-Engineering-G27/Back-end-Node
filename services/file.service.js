@@ -14,9 +14,7 @@ async function uploadFile({ file }) {
     return await new Promise((resolve, reject) => {
         fs.createReadStream(file.path).pipe(uploadStream).on('close', () => {
             fs.unlink(file.path, () => {
-                resolve({
-                    id: uploadStream.id.toHexString(),
-                });
+                resolve(uploadStream.id.toHexString());
             });
         });
         uploadStream.on('error', (error) => {
@@ -39,7 +37,20 @@ async function retrieveFile({ fileId, stream }) {
     });
 };
 
+async function removeFile({ fileId }) {
+    const _id = new mongoose.Types.ObjectId(fileId);
+    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'storage' });
+    return await new Promise((resolve, reject) => {
+        bucket.delete(_id, (error) => {
+            if (error)
+                return reject(error);
+            resolve();
+        });
+    });
+};
+
 module.exports = {
     retrieveFile,
     uploadFile,
+    removeFile,
 };

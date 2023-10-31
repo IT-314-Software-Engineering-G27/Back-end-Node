@@ -1,23 +1,11 @@
 const express = require('express');
 const fileRouter = express.Router();
-const multer = require('multer');
 const FileController = require('../controllers/file.controller');
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads');
-    },
-    filename: function (req, file, cb) {
-        const hex = Buffer.from(Date.now().toString()).toString('hex');
-        cb(null, hex);
-    }
-});
-
-const upload = multer({ storage });
+const { upload, gridFSMiddleware } = require('../middlewares/file.middleware');
+const { tokenToIDMiddleware } = require('../middlewares/auth.middleware');
 
 fileRouter.get('/:id', FileController.get);
-
-fileRouter.post('/', upload.single('file'), FileController.post);
+fileRouter.post('/profile', upload.single('file'), tokenToIDMiddleware, gridFSMiddleware, FileController.updateProfile);
 
 module.exports = fileRouter;
 

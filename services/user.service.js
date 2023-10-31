@@ -1,6 +1,7 @@
 const { BadRequestError } = require('../errors');
 const UserModel = require('../models/user.model');
 const bcrypt = require('bcrypt');
+const { removeFile } = require('./file.service');
 
 async function listUsers() {
     return (await UserModel.find({}, {
@@ -19,6 +20,17 @@ async function createUser({ user }) {
             throw new BadRequestError('User already exists');
         throw error;
     }
+}
+
+async function updateProfileImage({ userId, fileId }) {
+    const { profile_image } = await UserModel.findById(userId, {
+        profile_image: 1
+    }).exec();
+    if (profile_image)
+        removeFile({ fileId: profile_image });
+    return await UserModel.findByIdAndUpdate(userId, {
+        profile_image: fileId
+    }, { new: true }).exec();
 }
 
 async function getUser({ userId }) {
@@ -50,4 +62,5 @@ module.exports = {
     getUser,
     updateUser,
     deleteUser,
+    updateProfileImage, 
 };
