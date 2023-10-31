@@ -55,22 +55,23 @@ async function updateJobApplication({ jobApplicationId, jobApplication: {
 };
 
 async function deleteJobApplication({ jobApplicationId }) {
-    const { job_profile } = await JobApplicationModel.findById(jobApplicationId, {
+    const { job_profile, individual } = await JobApplicationModel.findById(jobApplicationId, {
         job_profile: 1,
+        individual: 1,
     }).exec();
-    await IndividualModel.findByIdAndUpdate(individualId, {
+    await IndividualModel.findByIdAndUpdate(individual, {
         $pull: {
-            job_applications: newJobApplication._id,
+            job_applications: jobApplicationId,
         },
     }).exec();
 
     await JobProfileModel.findByIdAndUpdate(job_profile, {
         $pull: {
-            job_applications: newJobApplication._id,
+            job_applications: jobApplicationId,
         },
     }).exec();
     JobApplicationModel.findByIdAndDelete(jobApplicationId).exec();
-    return jobApplication;
+    return;
 }
 
 async function rejectJobApplication({ jobApplicationId }) {
