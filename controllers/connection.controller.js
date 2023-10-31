@@ -1,11 +1,11 @@
-const { createConnection, getConnectionsForUser, getConnection, rejectConnection, acceptConnection, deleteConnection } = require('../services/connection.service');
+const { createConnection, getConnectionsForUser, getConnection, getConnectionMessages, rejectConnection, acceptConnection, deleteConnection } = require('../services/connection.service');
 const { createMessage } = require('../services/message.service');
 const { ForbiddenError, BadRequestError } = require('../errors');
+const LIMIT_PER_PAGE = 10;
 const ConnectionController = {
     list: async (req, res, next) => {
         try {
-            const id = req.user._id;
-            const connections = await getConnectionsForUser({ userId: id });
+            const connections = await getConnectionsForUser({ userId: req.user._id });
             res.json({
                 message: 'Connections retrieved successfully',
                 payload: {
@@ -40,8 +40,7 @@ const ConnectionController = {
     },
     get: async (req, res, next) => {
         try {
-            const id = req.params.id;
-            const connection = await getConnection({ connectionId: id });
+            const connection = await getConnection({ connectionId: req.params.id });
             res.json({
                 message: 'Connection retrieved successfully',
                 payload: {
@@ -53,10 +52,24 @@ const ConnectionController = {
             next(error);
         }
     },
+    listMessages: async (req, res, next) => {
+        try {
+            const { page } = req.query;
+            const messages = await getConnectionMessages({ connectionId: req.params.id, page: page ?? 0, limit: LIMIT_PER_PAGE });
+            res.json({
+                message: 'Messages retrieved successfully',
+                payload: {
+                    messages,
+                }
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    },
     accept: async (req, res, next) => {
         try {
-            const id = req.params.id;
-            const connection = await acceptConnection({ role: req.user.connection.role, connectionId: id });
+            const connection = await acceptConnection({ role: req.user.connection.role, connectionId: req.params.id });
             res.json({
                 message: 'Connection accepted successfully',
                 payload: {
@@ -70,8 +83,7 @@ const ConnectionController = {
     },
     reject: async (req, res, next) => {
         try {
-            const id = req.params.id;
-            const connection = await rejectConnection({ role: req.user.connection.role, connectionId: id });
+            const connection = await rejectConnection({ role: req.user.connection.role, connectionId: req.params.id });
             res.json({
                 message: 'Connection rejected successfully',
                 payload: {
@@ -85,8 +97,7 @@ const ConnectionController = {
     },
     delete: async (req, res, next) => {
         try {
-            const id = req.params.id;
-            await deleteConnection({ connectionId: id });
+            await deleteConnection({ connectionId: req.params.id });
             res.json({
                 message: 'Connection deleted successfully',
             });
@@ -97,7 +108,7 @@ const ConnectionController = {
     },
     message: async (req, res, next) => {
         try {
-            if (req.user.connection.status !== 'accepted') throw new ForbiddenError('You are not authorized to send messages to this connection');
+            if (req.user.connection.status !== 'accepted') throw new ForbiddenError('Connection is not accepted yet');
             const { content } = req.body;
             if (!content) throw new BadRequestError('Message content is required');
             const message = await createMessage({
@@ -106,7 +117,7 @@ const ConnectionController = {
                 }
             });
             res.json({
-                message: 'Message sent successfully',
+                message: 'Message saved successfully',
                 payload: {
                     message,
                 }

@@ -24,7 +24,7 @@ const MessageSchema = new Schema({
     },
     timestamp: {
         type: Schema.Types.Date,
-        default: Date.now,
+        default: Date.now(),
     },
 });
 
