@@ -3,6 +3,8 @@ const { BadRequestError, InternalServerError } = require('../../errors');
 function validateUser({ user }) {
     if (!user)
         throw new BadRequestError('User not provided');
+    if (!validatePhoneNumber(user.phone_number))
+        throw new BadRequestError('Phone number is not valid');
     if (!validateEmail(user.email))
         throw new BadRequestError('Email is not valid');
     if (!validatePassword(user.password))
@@ -20,6 +22,12 @@ function transformInputToUser({ user }) {
         role: user.role,
         phone_number: user.phone_number,
     };
+}
+
+function validatePhoneNumber(phone_number) {
+    if (!phone_number)
+        return true;
+    return /^\+\d{3} \d{3}-\d{3}-\d{4}$/.test(phone_number);
 }
 
 function validateEmail(email) {
