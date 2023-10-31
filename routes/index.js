@@ -7,6 +7,7 @@ const fileRouter = require("./file.route");
 const connectionRouter = require("./connection.route");
 const jobApplicationRouter = require("./jobApplication.route");
 const messageRouter = require("./message.route");
+const generate = require('../generators');
 const router = express.Router();
 
 router.get('/', function (req, res, next) {
@@ -29,5 +30,16 @@ router.use('/job-applications', jobApplicationRouter);
 router.use('/connections', connectionRouter);
 router.use('/messages', messageRouter);
 
+router.post('/test', async (req, res, next) => {
+    try {
+        await generate();
+        res.json({
+            "message": "Kaboom!",
+            "payload": {}
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 
 module.exports = router;
