@@ -1,8 +1,6 @@
 const ConnectionModel = require('../models/connection.model');
 const UserModel = require('../models/user.model');
-
 const { ForbiddenError } = require('../errors');
-const { getIndividualBasic } = require('./individual.service');
 
 async function createConnection({ connection }) {
     const newConnection = await ConnectionModel.create(connection);
@@ -28,7 +26,7 @@ async function getConnectionsForUser({ userId }) {
     return connections.map((connection) => connection.toString());
 };
 
-async function getConnectionBasic({ connectionId }) {
+async function getConnection({ connectionId }) {
     const connection = await ConnectionModel.findById(connectionId, {
         from: 1,
         to: 1,
@@ -37,15 +35,14 @@ async function getConnectionBasic({ connectionId }) {
     return connection;
 }
 
-async function getConnection({ connectionId }) {
-    const connection = await ConnectionModel.findById(connectionId, {
-        from: 1,
-        to: 1,
-        messages: 1,
-        status: 1,
+async function getConnectionMessages({ connectionId, page, limit }) {
+    const { messages } = await ConnectionModel.findById(connectionId, {
+        messages: {
+            $slice: [- page * limit - 1, limit],
+        },
     }).exec();
-    return connection;
-};
+    return messages;
+}
 
 async function rejectConnection({ role, connectionId }) {
     if (role != 'to') throw new ForbiddenError("You are not authorized to reject this connection");
@@ -68,8 +65,8 @@ async function deleteConnection({ connectionId }) {
 module.exports = {
     createConnection,
     getConnectionsForUser,
+    getConnectionMessages,
     getConnection,
-    getConnectionBasic,
     acceptConnection,
     rejectConnection,
     deleteConnection,

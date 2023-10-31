@@ -1,44 +1,42 @@
+const ConnectionModel = require("../models/connection.model");
 const MessageModel = require("../models/message.model");
-const { ForbiddenError } = require("../errors");
 
 async function createMessage({ role, connectionId, message: { content } }) {
-    return await MessageModel.create({
+    const newMessage = await MessageModel.create({
         connection: connectionId,
         direction: role == "from" ? "from-to" : "to-from",
         content,
         status: "draft",
-        timestamp: Date.now(),
     });
-};
-
-async function getMessagesForConnection({ connectionId }) {
-    const messages = await MessageModel.find({ connection: connectionId }).exec();
-    return messages;
-};
-
-async function readMessage({ role, messageId }) {
-    const { direction } = await MessageModel.findById(messageId, {
-        direction: 1,
+    await ConnectionModel.findByIdAndUpdate(connectionId, {
+        $push: { messages: newMessage._id },
     }).exec();
-    if (role != direction.split("-")[1]) throw new ForbiddenError("You are not authorized to read this message");
+    return newMessage;
+};
+
+async function getMessage({ messageId }) {
+    return await MessageModel.findById(messageId).exec();
+}
+
+async function getMessageBasic({ messageId }) {
+    return await MessageModel.findById(messageId, {
+        connection: 1,
+        direction: 1,
+        status: 1,
+    });
+}
+
+async function readMessage({ messageId }) {
     return await MessageModel.findByIdAndUpdate(messageId, {
         status: "read",
     }, { new: true }).exec();
 };
 
-async function deleteMessage({ role, messageId }) {
-    const { direction } = await MessageModel.findById(messageId, {
-        direction: 1,
-    }).exec();
-    if (role != direction.split("-")[0]) throw new ForbiddenError("You are not authorized to read this message");
+async function deleteMessage({ messageId }) {
     return await MessageModel.findByIdAndDelete(messageId).exec();
 };
 
-async function sendMessage({ role, messageId }) {
-    const { direction } = await MessageModel.findById(messageId, {
-        direction: 1,
-    }).exec();
-    if (role != direction.split("-")[0]) throw new ForbiddenError("You are not authorized to read this message");
+async function sendMessage({ messageId }) {
     return await MessageModel.findByIdAndUpdate(messageId, {
         status: "sent",
     }, { new: true }).exec();
@@ -46,7 +44,8 @@ async function sendMessage({ role, messageId }) {
 
 module.exports = {
     createMessage,
-    getMessagesForConnection,
+    getMessage,
+    getMessageBasic,
     readMessage,
     deleteMessage,
     sendMessage,
