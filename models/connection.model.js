@@ -27,6 +27,13 @@ const ConnectionSchema = new Schema({
     }
 });
 
+ConnectionSchema.index({
+    from: 1,
+    to: 1,
+}, {
+    unique: true,
+});
+
 const ConnectionModel = mongoose.models["Connection"] ?? mongoose.model("Connection", ConnectionSchema);
 
 module.exports = ConnectionModel;

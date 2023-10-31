@@ -6,6 +6,7 @@ const IndividualSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: "User",
+        unique: true,
         required: [true, "User is required"],
     },
     first_name: {

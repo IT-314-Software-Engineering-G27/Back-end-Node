@@ -3,20 +3,28 @@ const UserModel = require('../models/user.model');
 const { ForbiddenError } = require('../errors');
 
 async function createConnection({ connection }) {
-    const newConnection = await ConnectionModel.create(connection);
-    await UserModel.findByIdAndUpdate(newConnection.from, {
-        $push: {
-            connections: newConnection._id,
-        }
-    }, {
-        throw: true,
-    }).exec();
-    await UserModel.findByIdAndUpdate(newConnection.to, {
-        $push: {
-            connections: newConnection._id,
-        }
-    }).exec();
-    return newConnection;
+    try {
+        const newConnection = await ConnectionModel.create(connection);
+        await UserModel.findByIdAndUpdate(newConnection.from, {
+            $push: {
+                connections: newConnection._id,
+            }
+        }, {
+            throw: true,
+        }).exec();
+        await UserModel.findByIdAndUpdate(newConnection.to, {
+            $push: {
+                connections: newConnection._id,
+            }
+        }).exec();
+        return newConnection;
+    }
+    catch (error) {
+        if (error.code === 11000)
+            throw new BadRequestError('Connection already exists');
+        else
+            throw new BadRequestError(error.message);
+    };
 };
 
 async function getConnectionsForUser({ userId }) {
