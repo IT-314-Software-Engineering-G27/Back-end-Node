@@ -3,6 +3,16 @@ const JobProfileModel = require('../models/jobProfile.model');
 const OrganizationModel = require('../models/organization.model');
 
 async function listJobProfiles({ query, page, limit }) {
+    if (query.length <= 3) {
+        return (await JobProfileModel.find({
+            $or: [
+                { title: { $regex: `^${query}`, $options: 'i', }, },
+                { posting_location: { $regex: `^${query}`, $options: 'i', }, },
+            ]
+        }, {
+            _id: 1,
+        }).skip(page * limit).limit(limit).exec()).map((jobProfile) => jobProfile._id);
+    }
     return (await JobProfileModel.find({ $text: { $search: query } }, {
         score: {
             $meta: 'textScore',
