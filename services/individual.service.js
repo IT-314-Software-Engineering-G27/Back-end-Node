@@ -38,7 +38,7 @@ async function createIndividual({ individual }) {
     try {
         const newIndividual = await IndividualModel.create(individual);
         await UserModel.findByIdAndUpdate(user._id, { individual: newIndividual._id }).exec();
-        return individual;
+        return newIndividual;
     }
     catch (error) {
         await deleteUser({ userId: user._id });

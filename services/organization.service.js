@@ -32,7 +32,7 @@ async function createOrganization({ organization }) {
     try {
         const newOrganization = await OrganizationModel.create(organization);
         await UserModel.findByIdAndUpdate(user._id, { organization: newOrganization._id }).exec();
-        return organization;
+        return newOrganization;
     }
     catch (error) {
         await deleteUser({ userId: user._id });
