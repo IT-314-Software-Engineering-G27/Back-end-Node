@@ -5,6 +5,7 @@ const organizationRouter = require('./organization.route');
 const jobProfileRouter = require('./jobProfile.route');
 const fileRouter = require("./file.route");
 const connectionRouter = require("./connection.route");
+const jobApplicationRouter = require("./jobApplication.route");
 const router = express.Router();
 
 router.get('/', function (req, res, next) {
@@ -24,6 +25,7 @@ router.use('/auth', authRouter);
 router.use('/files', fileRouter);
 router.use('/job-profiles', jobProfileRouter);
 router.use('/connections', connectionRouter);
+router.use('/job-applications', jobApplicationRouter);
 
 
 module.exports = router;
