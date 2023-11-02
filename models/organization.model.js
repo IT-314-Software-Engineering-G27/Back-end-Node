@@ -13,12 +13,14 @@ const OrganizationSchema = new Schema({
         required: [true, "Company name required"],
         minlength: [1, "Company name cannot be empty"],
         maxlength: [255, "Company name cannot be more than 255"],
+        index: true,
     },
     CEOname: {
         type: Schema.Types.String,
         required: [true, "CEO name required"],
         minlength: [1, "CEO name cannot be empty"],
         maxlength: [255, "CEO name cannot be more than 255"],
+        index: true,
     },
     description: {
         type: Schema.Types.String,

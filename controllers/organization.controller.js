@@ -1,25 +1,13 @@
 const LIMIT_PER_PAGE = 10;
-const {
-    listOrganizations,
-    createOrganization,
-    getOrganization,
-    getOrganizationBasic,
-    getOrganizationProfile,
-    getEvents,
-    getJobProfiles,
-    deleteOrganization,
-    updateOrganization,
-} = require("../services/organization.service");
-const {
-    validateOrganization,
-    transformInputToOrganization,
-} = require("../services/utils/organization.util");
+const { listOrganizations, createOrganization, getOrganization, getOrganizationBasic, deepSearchOrganizations, getOrganizationProfile, getEvents, getJobProfiles, deleteOrganization, updateOrganization, } = require("../services/organization.service");
+const { validateOrganization, transformInputToOrganization, } = require("../services/utils/organization.util");
 
 const OrganizationController = {
     list: async (req, res, next) => {
         try {
-            const { query, page } = req.query;
-            const organizations = await listOrganizations({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const { query, page, deep } = req.query;
+            const organizations = deep === "true" ? await deepSearchOrganizations({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE }) : await listOrganizations({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+            
             res.json({
                 message: "Fetched organizations successfully",
                 payload: {

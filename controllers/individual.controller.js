@@ -1,12 +1,14 @@
 const LIMIT_PER_PAGE = 10;
-const { listIndividuals, createIndividual, getIndividualBasic, deleteIndividual, updateIndividual, getIndividual, getIndividualProfile } = require("../services/individual.service");
+const { listIndividuals, createIndividual, getIndividualBasic, deleteIndividual, updateIndividual, getIndividual, getIndividualProfile, deepSearchIndividuals } = require("../services/individual.service");
 const { transformInputToIndividual, validateIndividual } = require("../services/utils/individual.util");
 
 const IndividualController = {
     list: async (req, res, next) => {
         try {
-            const { query, page } = req.query;
-            const individuals = await listIndividuals({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const { query, page, deep } = req.query;
+            const individuals = deep === "true" ? await deepSearchIndividuals({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE }) :
+                await listIndividuals({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+
             res.json({
                 message: "Fetched individuals successfully",
                 payload: {

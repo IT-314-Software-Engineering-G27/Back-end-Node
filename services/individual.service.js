@@ -1,55 +1,33 @@
-const {
-	createUser,
-	getUser,
-	updateUser,
-	deleteUser,
-} = require("../services/user.service");
+const { createUser, getUser, updateUser, deleteUser, } = require("../services/user.service");
 const { BadRequestError } = require("../errors");
 const IndividualModel = require("../models/individual.model");
 const UserModel = require("../models/user.model");
 
 async function listIndividuals({ query, page, limit }) {
-	if (query.length <= 3) {
-		return (
-			await IndividualModel.find(
-				{
-					$or: [
-						{ first_name: { $regex: `^${query}`, $options: "i" } },
-						{ last_name: { $regex: `^${query}`, $options: "i" } },
-					],
-				},
-				{
-					_id: 1,
-				}
-			)
-				.sort({
-					username: 1,
-				})
-				.skip(page * limit)
-				.limit(limit)
-				.exec()
-		).map((individual) => individual._id);
-	}
+	return (await IndividualModel.find({
+		$or: [
+			{ first_name: { $regex: `^${query}`, $options: "i" } },
+			{ last_name: { $regex: `^${query}`, $options: "i" } },
+		],
+	}, {
+		_id: 1,
+	}).skip(page * limit).limit(limit).exec()).map((individual) => individual._id);
+}
 
-	return (
-		await IndividualModel.find(
-			{ $text: { $search: query } },
-			{
-				score: {
-					$meta: "textScore",
-				},
-				_id: 1,
-			}
-		)
-			.sort({
-				score: {
-					$meta: "textScore",
-				},
-			})
-			.skip(page * limit)
-			.limit(limit)
-			.exec()
-	).map((individual) => individual._id);
+async function deepSearchIndividuals({ query, page, limit }) {
+	return (await IndividualModel.find({ $text: { $search: query } },
+		{
+			score: { $meta: "textScore", },
+			_id: 1,
+		}).sort({
+			score: {
+				$meta: "textScore",
+			},
+		})
+		.skip(page * limit)
+		.limit(limit)
+		.exec()
+	);
 }
 
 async function createIndividual({ individual }) {
@@ -90,15 +68,14 @@ async function getIndividualBasic({ individualId }) {
 		first_name: 1,
 		last_name: 1,
 		user: 1,
+	}).populate({
+		path: "user",
+		select: {
+			email: 1,
+			username: 1,
+			profile_image: 1,
+		},
 	})
-		.populate({
-			path: "user",
-			select: {
-				email: 1,
-				username: 1,
-				profile_image: 1,
-			},
-		})
 		.exec();
 }
 
@@ -138,6 +115,7 @@ async function deleteIndividual({ user }) {
 module.exports = {
 	listIndividuals,
 	createIndividual,
+	deepSearchIndividuals,
 	getIndividual,
 	getIndividualBasic,
 	getIndividualProfile,
