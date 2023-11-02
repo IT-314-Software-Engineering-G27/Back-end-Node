@@ -13,6 +13,7 @@ const JobProfileSchema = new Schema({
         required: [true, "Title required"],
         minlength: [1, "Title cannot be empty"],
         maxlength: [255, "Title cannot be more than 255 characters"],
+        index: true,
     },
     description: {
         type: Schema.Types.String,
@@ -25,6 +26,7 @@ const JobProfileSchema = new Schema({
         required: [true, "Posting location required"],
         minlength: [1, "Posting location cannot be empty"],
         maxlength: [1024, "Posting location cannot be more than 1024 characters"],
+        index: true,
     },
     requirements: [{
         type: Schema.Types.String,
@@ -41,6 +43,7 @@ const JobProfileSchema = new Schema({
         default: [],
     }
 });
+
 
 JobProfileSchema.index({
     title: "text",

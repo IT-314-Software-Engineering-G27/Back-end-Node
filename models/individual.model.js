@@ -14,12 +14,14 @@ const IndividualSchema = new Schema({
         required: [true, "First name is required"],
         minlength: [1, "First name cannot be empty"],
         maxlength: [255, "First name cannot be more than 255 characters"],
+        index: true
     },
     last_name: {
         type: Schema.Types.String,
         required: [true, "Last name is required"],
         minlength: [1, "Last name cannot be empty"],
         maxlength: [255, "Last name cannot be more than 255 characters"],
+        index: true
     },
     college: {
         type: Schema.Types.String,
@@ -52,7 +54,6 @@ IndividualSchema.index({
     first_name: "text",
     last_name: "text",
     college: "text",
-    country: "text",
     degree: "text",
     skills: "text",
     bio: "text",
@@ -62,7 +63,6 @@ IndividualSchema.index({
         first_name: 8,
         last_name: 10,
         college: 6,
-        country: 3,
         degree: 6,
         skills: 7,
         bio: 3,
