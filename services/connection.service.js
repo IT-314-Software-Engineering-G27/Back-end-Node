@@ -1,6 +1,6 @@
 const ConnectionModel = require('../models/connection.model');
 const UserModel = require('../models/user.model');
-const { ForbiddenError } = require('../errors');
+const { ForbiddenError, BadRequestError } = require('../errors');
 
 async function createConnection({ connection }) {
     try {
