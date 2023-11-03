@@ -1,4 +1,5 @@
 const LIMIT_PER_PAGE = 10;
+const { BadRequestError } = require("../errors");
 const { listIndividuals, createIndividual, getIndividualBasic, deleteIndividual, updateIndividual, getIndividual, getIndividualProfile, deepSearchIndividuals } = require("../services/individual.service");
 const { transformInputToIndividual, validateIndividual } = require("../services/utils/individual.util");
 
@@ -8,7 +9,6 @@ const IndividualController = {
             const { query, page, deep } = req.query;
             const individuals = deep === "true" ? await deepSearchIndividuals({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE }) :
                 await listIndividuals({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
-
             res.json({
                 message: "Fetched individuals successfully",
                 payload: {
@@ -22,6 +22,7 @@ const IndividualController = {
     create: async (req, res, next) => {
         try {
             const { individual } = req.body;
+            if(!individual.user) throw new BadRequestError("User is required");
             validateIndividual({ individual });
             const transformedIndividual = transformInputToIndividual({ individual });
             const newIndividual = await createIndividual({ individual: transformedIndividual });
