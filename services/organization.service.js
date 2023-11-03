@@ -63,6 +63,7 @@ async function getOrganizationBasic({ organizationId }) {
         company_name: 1,
         CEOname: 1,
         user: 1,
+        headquarter_location: 1,
     }).populate({
         path: 'user',
         select: {

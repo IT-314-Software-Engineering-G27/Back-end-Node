@@ -26,8 +26,7 @@ async function deepSearchIndividuals({ query, page, limit }) {
 		})
 		.skip(page * limit)
 		.limit(limit)
-		.exec()
-	);
+		.exec()).map((individual) => individual._id);
 }
 
 async function createIndividual({ individual }) {
@@ -68,6 +67,7 @@ async function getIndividualBasic({ individualId }) {
 		first_name: 1,
 		last_name: 1,
 		user: 1,
+		country: 1,
 	}).populate({
 		path: "user",
 		select: {
