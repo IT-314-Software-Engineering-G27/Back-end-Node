@@ -9,7 +9,7 @@ async function jobApplicationMiddleware(req, res, next) {
         const jobProfile = await getJobProfileBasic({ jobProfileId: jobApplication.job_profile });
         if (jobProfile.organization == organization)
             req.user.role = 'organization';
-        else if (jobApplication.individual == individual)
+        else if (jobApplication.individual._id == individual)
             req.user.role = 'individual';
         else
             throw new ForbiddenError('You are not authorized to access this resource');

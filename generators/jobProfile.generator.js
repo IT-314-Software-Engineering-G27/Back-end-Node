@@ -8,7 +8,7 @@ function generateJobProfile() {
         requirements: faker.helpers.uniqueArray(faker.word.sample, faker.number.int({ min: 18, max: 20 })).join(' '),
         compensations: faker.helpers.uniqueArray(faker.word.sample, faker.number.int({ min: 5, max: 12 })).join(' '),
         salary: faker.number.int({ min: 1000, max: 30000 }),
-        duration: faker.helpers.randomize(['full-time', 'part-time', 'internship', 'contract']),
+        duration: faker.helpers.arrayElement(['full-time', 'part-time', 'internship', 'contract']),
     }
 };
 

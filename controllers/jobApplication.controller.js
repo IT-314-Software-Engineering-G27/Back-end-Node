@@ -1,4 +1,4 @@
-const {  getJobApplicationsForIndividual, getJobApplication, getJobApplicationBasic, updateJobApplication, deleteJobApplication, rejectJobApplication, acceptJobApplication, } = require('../services/jobApplication.service');
+const { getJobApplicationsForIndividual, getJobApplication, getJobApplicationBasic, updateJobApplication, deleteJobApplication, rejectJobApplication, acceptJobApplication, } = require('../services/jobApplication.service');
 
 const JobApplicationController = {
     list: async (req, res, next) => {
