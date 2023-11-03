@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { removeFile } = require("./file.service");
 
 async function createUser({ user }) {
-	if(!user.password) throw new BadRequestError("Password is required");
+	if (!user.password) throw new BadRequestError("Password is required");
 	user.password = await bcrypt.hash(user.password, 10);
 	try {
 		return await UserModel.create(user);
@@ -16,13 +16,10 @@ async function createUser({ user }) {
 }
 
 async function updateProfileImage({ userId, fileId }) {
-	const { profile_image } = await UserModel.findById(userId, {
-		profile_image: 1,
-	}).exec();
-	if (profile_image) removeFile({ fileId: profile_image });
+	const url = `${process.env.CLIENT_URL}/files/${fileId}`;
 	return await UserModel.findByIdAndUpdate(
 		userId,
-		{ profile_image: fileId },
+		{ profile_image: url },
 		{ new: true }
 	).exec();
 }
