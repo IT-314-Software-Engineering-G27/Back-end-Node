@@ -16,15 +16,19 @@ const MessageSchema = new Schema({
     content: {
         type: Schema.Types.String,
         required: [true, "Content is required"],
+        minlength: [1, "Content must be at least 1 character"],
     },
     status: {
         type: Schema.Types.String,
-        enum: ["draft", "sent",  "read"],
-        default: "draft",
+        enum: ["sent", "read"],
+        default: "sent",
     },
-    timestamp: {
+    sent_timestamp: {
         type: Schema.Types.Date,
         default: Date.now(),
+    },
+    read_timestamp: {
+        type: Schema.Types.Date,
     },
 });
 

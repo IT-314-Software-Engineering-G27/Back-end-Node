@@ -32,16 +32,16 @@ router.use("/connections", connectionRouter);
 router.use("/messages", messageRouter);
 router.use("/reset", resetRouter);
 
-// router.post("/test", async (req, res, next) => {
-// 	try {
-// 		await generate();
-// 		res.json({
-// 			message: "Kaboom!",
-// 			payload: {},
-// 		});
-// 	} catch (error) {
-// 		next(error);
-// 	}
-// });
+router.post("/test", async (req, res, next) => {
+	try {
+		await generate();
+		res.json({
+			message: "Kaboom!",
+			payload: {},
+		});
+	} catch (error) {
+		next(error);
+	}
+});
 
 module.exports = router;

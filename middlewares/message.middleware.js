@@ -8,6 +8,7 @@ async function messageMiddleware(req, res, next) {
         if (!message)
             throw new NotFoundError('Message not found.');
         const connection = await getConnection({ connectionId: message.connection });
+        req.user.message = {};
         if (connection.from == userId) {
             if (message.direction == 'from-to')
                 req.user.message.direction = 'outgoing';

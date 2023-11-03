@@ -5,7 +5,6 @@ const { messageMiddleware } = require('../middlewares/message.middleware');
 const { tokenToIDMiddleware } = require('../middlewares/auth.middleware');
 
 messageRouter.get('/:id', tokenToIDMiddleware,  messageMiddleware, MessageController.get);
-messageRouter.post('/:id/send', tokenToIDMiddleware, messageMiddleware, MessageController.send);
 messageRouter.delete('/:id', tokenToIDMiddleware, messageMiddleware, MessageController.delete);
-
+messageRouter.put('/:id', tokenToIDMiddleware, messageMiddleware, MessageController.update);
 module.exports = messageRouter;
