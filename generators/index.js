@@ -61,6 +61,7 @@ module.exports = async () => {
             last_name: organization.company_name
         });
         const user = generateUser({ first_name: organization.CEOname.split(' ').reverse()[0], last_name: organization.company_name });
+        user.role = 'organization';
         organization.user = user;
         organizations.push(organization);
     }

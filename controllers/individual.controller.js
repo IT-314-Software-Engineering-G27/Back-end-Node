@@ -22,7 +22,7 @@ const IndividualController = {
     create: async (req, res, next) => {
         try {
             const { individual } = req.body;
-            if(!individual.user) throw new BadRequestError("User is required");
+            if (!individual?.user) throw new BadRequestError("User is required");
             validateIndividual({ individual });
             const transformedIndividual = transformInputToIndividual({ individual });
             const newIndividual = await createIndividual({ individual: transformedIndividual });
