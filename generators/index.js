@@ -16,14 +16,13 @@ const { faker } = require('@faker-js/faker');
 module.exports = async () => {
     const individuals = [];
     const organizations = [];
-    const jobApplications = [];
     const connections = [];
 
     const userIds = [];
     // create 500 individuals
     const names = [];
     for (let i = 0; i < 500; i++) {
-        var individual = generateIndividual();
+        let individual = generateIndividual();
         while (names.includes({
             first_name: individual.first_name,
             last_name: individual.last_name
@@ -47,8 +46,7 @@ module.exports = async () => {
 
     // create 200 organizations
     for (let i = 0; i < 200; i++) {
-
-        const organization = generateOrganization();
+        let organization = generateOrganization();
         while (names.includes({
             first_name: organization.CEOname.split(' ').reverse()[0],
             last_name: organization.company_name
@@ -70,9 +68,6 @@ module.exports = async () => {
         return _id;
     }));
 
-
-
-    // create 100 job profiles
     const organizationWithJobProfileIds = faker.helpers.arrayElements(organizationIds, 100);
 
     const jobProfileIds = await Promise.all(organizationWithJobProfileIds.map(async (organizationId) => {
@@ -81,23 +76,19 @@ module.exports = async () => {
         return _id;
     }));
 
-    // create 250 job applications
-
-    for (let i = 0; i < 250; i++) {
-        const jobApplication = generateJobApplication();
-        jobApplications.push(jobApplication);
-    }
-
-    await Promise.all(jobApplications.map(async (jobApplication) => {
-        await createJobApplication({ jobApplication, individualId: faker.helpers.arrayElement(individualIds), jobProfileId: faker.helpers.arrayElement(jobProfileIds) });
+    await Promise.all(jobProfileIds.map(async (jobProfileId) => {
+        const applicants = faker.helpers.arrayElements(individualIds, faker.number.int({ min: 5, max: 20 }));
+        await Promise.all(applicants.map(async (applicant) => {
+            const jobApplication = generateJobApplication();
+            await createJobApplication({ jobApplication, jobProfileId, individualId: applicant });
+        }));
     }));
 
-    // create 200 connections
+    const user1List = faker.helpers.arrayElements(userIds, 200);
+    const user2List = faker.helpers.arrayElements(userIds, 200);
+
     for (let i = 0; i < 200; i++) {
-        const connection = generateConnection({
-            userId1: faker.helpers.arrayElement(userIds),
-            userId2: faker.helpers.arrayElement(userIds),
-        });
+        const connection = generateConnection({ userId1: user1List[i], userId2: user2List[i] });
         connections.push(connection);
     }
 
@@ -112,5 +103,5 @@ module.exports = async () => {
             await createMessage({ message, connectionId, role: faker.helpers.arrayElement(['from', 'to']) });
         }
     }));
-    return "";
+    return '';
 };
