@@ -59,7 +59,9 @@ async function getJobProfileBasic({ jobProfileId }) {
         organization: 1,
         title: 1,
         posting_location: 1,
-        wages: 1,
+        salary: 1,
+        posted: 1,
+        duration: 1,
     }).exec();
 };
 
