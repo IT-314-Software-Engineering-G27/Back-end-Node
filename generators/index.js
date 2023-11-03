@@ -13,15 +13,19 @@ const { createConnection } = require('../services/connection.service');
 const { createMessage } = require('../services/message.service');
 const { faker } = require('@faker-js/faker');
 
+const NUM_OF_INDIVIDUALS = 500;
+const NUM_OF_ORGANIZATIONS = 200;
+const NUM_OF_JOB_PROFILES = 150;
+const NUM_OF_CONNECTIONS = 250;
+
 module.exports = async () => {
     const individuals = [];
     const organizations = [];
     const connections = [];
 
     const userIds = [];
-    // create 500 individuals
     const names = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < NUM_OF_INDIVIDUALS; i++) {
         let individual = generateIndividual();
         while (names.includes({
             first_name: individual.first_name,
@@ -44,8 +48,7 @@ module.exports = async () => {
         return _id;
     }));
 
-    // create 200 organizations
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < NUM_OF_ORGANIZATIONS; i++) {
         let organization = generateOrganization();
         while (names.includes({
             first_name: organization.CEOname.split(' ').reverse()[0],
@@ -68,7 +71,7 @@ module.exports = async () => {
         return _id;
     }));
 
-    const organizationWithJobProfileIds = faker.helpers.arrayElements(organizationIds, 100);
+    const organizationWithJobProfileIds = faker.helpers.arrayElements(organizationIds, NUM_OF_JOB_PROFILES);
 
     const jobProfileIds = await Promise.all(organizationWithJobProfileIds.map(async (organizationId) => {
         const jobProfile = generateJobProfile();
@@ -84,10 +87,10 @@ module.exports = async () => {
         }));
     }));
 
-    const user1List = faker.helpers.arrayElements(userIds, 200);
-    const user2List = faker.helpers.arrayElements(userIds, 200);
+    const user1List = faker.helpers.arrayElements(userIds, NUM_OF_CONNECTIONS);
+    const user2List = faker.helpers.arrayElements(userIds, NUM_OF_CONNECTIONS);
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < NUM_OF_ORGANIZATIONS; i++) {
         const connection = generateConnection({ userId1: user1List[i], userId2: user2List[i] });
         connections.push(connection);
     }
