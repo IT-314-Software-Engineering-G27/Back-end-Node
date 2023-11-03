@@ -1,40 +1,38 @@
-const { readMessage, getMessage, deleteMessage, sendMessage, } = require("../services/message.service");
+const { readMessage, getMessage, deleteMessage, updateMessage, } = require("../services/message.service");
 const { ForbiddenError } = require("../errors");
 const MessageController = {
     get: async (req, res, next) => {
         try {
             const { direction, status } = req.user.message;
             if (direction == 'incoming') {
-                if (status == 'draft') {
-                    res.json({
-                        message: 'Message is not sent yet.',
-                        payload: {
-                            draft: true,
-                        },
-                    });
-                }
-                else
+                if (status == 'sent') {
                     await readMessage({ messageId: req.params.id });
+                }
             }
             const message = await getMessage({ messageId: req.params.id });
+            message.direction = direction;
             res.json({
                 message: 'Message retrieved Successfully',
                 payload: {
-                    message,
+                    message
                 },
             });
         } catch (error) {
             next(error);
         }
     },
-    send: async (req, res, next) => {
+    update: async (req, res, next) => {
         try {
-            const { direction } = req.user.message;
+            const { direction, status } = req.user.message;
+            const { content } = req.body;
             if (direction != 'outgoing')
-                throw new ForbiddenError('You are not allowed to send this message.');
-            const message = await sendMessage({ messageId: req.params.id });
+                throw new ForbiddenError('You are not allowed to update this message.');
+            if (status == 'read')
+                throw new ForbiddenError('You can not update a read message.');
+            const message = await updateMessage({ messageId: req.params.id, content });
+            message.direction = direction;
             res.json({
-                message: 'Message sent Successfully.',
+                message: 'Message updated Successfully.',
                 payload: {
                     message,
                 },
