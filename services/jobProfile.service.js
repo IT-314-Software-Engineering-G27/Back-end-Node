@@ -65,12 +65,19 @@ async function getJobProfileBasic({ jobProfileId }) {
     }).exec();
 };
 
-
-async function listApplications({ jobProfileId }) {
+async function listApplications({ jobProfileId, query, page, limit }) {
     const { job_applications } = await JobProfileModel.findById(jobProfileId, {
         job_applications: 1,
+    }).populate({
+        path: 'job_applications',
+        select: {
+            cover_letter: 1,
+        }
     }).exec();
-    return job_applications.map((job_application) => job_application.toString());
+    return job_applications.filter((job_application) => {
+        if(!query) return true;
+        return String(job_application.cover_letter).test(`^${query}/i`);
+    }).slice(page * limit, (page + 1) * limit).map((job_application) => job_application._id);
 }
 
 async function getJobProfile({ jobProfileId }) {

@@ -52,10 +52,14 @@ async function getJobApplication({ jobApplicationId }) {
 async function getJobApplicationBasic({ jobApplicationId }) {
 	const jobApplication = await JobApplicationModel.findById(
 		jobApplicationId,
-		{
-			cover_letter: 0,
+		{ cover_letter: 0, }
+	).populate({
+		path: "individual",
+		select: {
+			_id: 1,
+			skills: 1,
 		}
-	).exec();
+	}).exec();
 	return jobApplication;
 }
 

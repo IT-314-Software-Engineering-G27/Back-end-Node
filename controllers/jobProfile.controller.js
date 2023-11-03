@@ -1,9 +1,10 @@
-const LIMIT_PER_PAGE = 10;
 const { getJobProfile } = require("../services/jobProfile.service");
 const { listJobProfiles, listApplications, deleteJobProfile, deepSearchJobProfiles, createJobProfile, getJobProfileBasic, updateJobProfile, } = require("../services/jobProfile.service");
 const { createJobApplication } = require("../services/jobApplication.service");
 const { transformInputToJobProfile } = require("../services/utils/jobProfile.util");
 const { ForbiddenError, BadRequestError } = require("../errors");
+
+const LIMIT_PER_PAGE = 10;
 
 const JobProfileController = {
     list: async (req, res, next) => {
@@ -65,7 +66,8 @@ const JobProfileController = {
     },
     getApplications: async (req, res, next) => {
         try {
-            const applications = await listApplications({ jobProfileId: req.params.id });
+            const { page } = req.query;
+            const applications = await listApplications({ jobProfileId: req.params.id, page: page ?? 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: "Fetched applicants successfully",
                 payload: {
