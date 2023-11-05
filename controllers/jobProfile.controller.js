@@ -69,11 +69,11 @@ const JobProfileController = {
             const individualId = req.user.individual;
             if (!individualId) throw new BadRequestError('Individual id is required');
             const jobProfileId = req.params.id;
-            const status = await getJobProfileStatus({ individualId, jobProfileId });
+            const jobApplication = await getJobProfileStatus({ individualId, jobProfileId });
             res.json({
                 message: "Fetched job profile status successfully",
                 payload: {
-                    status,
+                    jobApplication
                 }
             });
         }
@@ -88,7 +88,7 @@ const JobProfileController = {
             res.json({
                 message: "Fetched applicants successfully",
                 payload: {
-                    applications,
+                    jobApplications,
                 }
             });
         } catch (error) {
@@ -103,7 +103,7 @@ const JobProfileController = {
             res.json({
                 message: "Job application created successfully",
                 payload: {
-                    application: newJobApplication,
+                    jobApplication: newJobApplication,
                 }
             });
         } catch (error) {

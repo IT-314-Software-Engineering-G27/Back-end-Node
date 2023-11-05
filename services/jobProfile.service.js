@@ -1,6 +1,7 @@
 const { BadRequestError } = require('../errors');
 const JobProfileModel = require('../models/jobProfile.model');
 const OrganizationModel = require('../models/organization.model');
+const IndividualModel = require('../models/individual.model');
 
 async function listJobProfiles({ query, page, limit }) {
     return (await JobProfileModel.find({
@@ -76,8 +77,10 @@ async function getJobProfileStatus({ individualId, jobProfileId }) {
         },
     }).exec();
     const job_application = job_applications.find((job_application) => job_application.job_profile == jobProfileId);
-    if (!job_application) return 'not_applied';
-    return job_application.status;
+    if (!job_application) return {
+        status: 'Not Applied',
+    };
+    return job_application; 
 }
 
 async function listApplications({ jobProfileId, query, page, limit }) {
