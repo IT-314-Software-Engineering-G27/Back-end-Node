@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 	},
 });
 
-async function createReset({ email }) {
+async function createReset({ email,host }) {
 	const user = await UserModel.findOne({ email });
 	if (!user) throw new NotFoundError("User not found");
 	const otp = crypto.randomBytes(32).toString("hex");
@@ -26,7 +26,7 @@ async function createReset({ email }) {
 		subject: "StartApp Password Reset",
 		html: `<p>Use this OTP to reset your password: <b>${otp}</b></p>
         <p>This OTP will expire in 1 hour</p>
-        <p>Password Reset Link: <a href="${process.env.CLIENT_URL}/reset/${reset._id}">Click Here</a></p>`,
+        <p>Password Reset Link: <a href="${host}/reset/${reset._id}">Click Here</a></p>`,
 	});
 	return reset;
 }

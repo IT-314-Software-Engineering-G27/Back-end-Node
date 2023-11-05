@@ -20,9 +20,11 @@ const FileController = {
     },
     updateProfile: async (req, res) => {
         try {
+            const url = `${req.protocol}://${req.get('host')}`;
             const newUser = await updateProfileImage({
                 userId: req.user._id,
                 fileId: req.file._id,
+                host: url,
             });
             res.json({
                 message: 'Profile image updated successfully',
