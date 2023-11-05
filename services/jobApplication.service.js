@@ -56,8 +56,10 @@ async function getJobApplicationBasic({ jobApplicationId }) {
 	).populate({
 		path: "individual",
 		select: {
-			_id: 1,
-			skills: 1,
+			bio: 0,
+			job_applications: 0,
+			user: 0,
+			age: 0,
 		}
 	}).exec();
 	return jobApplication;
