@@ -15,25 +15,25 @@ const transporter = nodemailer.createTransport({
 	},
 });
 
-async function createReset({ email }) {
-	const { _id } = await UserModel.findOne({ email });
-	if (!_id) throw new NotFoundError("User not found");
+async function createReset({ email,host }) {
+	const user = await UserModel.findOne({ email });
+	if (!user) throw new NotFoundError("User not found");
 	const otp = crypto.randomBytes(32).toString("hex");
-	const reset = await ResetModel.create({ userId: _id, otp });
+	const reset = await ResetModel.create({ userId: user._id, otp });
 	await transporter.sendMail({
 		from: `${process.env.NODEMAILER_EMAIL}`,
 		to: email,
 		subject: "StartApp Password Reset",
 		html: `<p>Use this OTP to reset your password: <b>${otp}</b></p>
         <p>This OTP will expire in 1 hour</p>
-        <p>Password Reset Link: <a href="${process.env.CLIENT_URL}/reset/${reset._id}">Click Here</a></p>`,
+        <p>Password Reset Link: <a href="${host}/reset/${reset._id}">Click Here</a></p>`,
 	});
 	return reset;
 }
 
 async function applyReset({ otp, resetId, password }) {
 	const reset = await ResetModel.findById(resetId).exec();
-	if (!reset) throw new NotFoundError("Reset not found");
+	if (!reset) throw new NotFoundError("Reset expired");
 	if (reset.otp !== otp) throw new UnauthorizedError("Invalid OTP");
 	password = await bcrypt.hash(password, 10);
 	const user = await UserModel.findByIdAndUpdate(reset.userId, {

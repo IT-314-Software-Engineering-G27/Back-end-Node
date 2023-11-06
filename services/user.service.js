@@ -15,8 +15,8 @@ async function createUser({ user }) {
 	}
 }
 
-async function updateProfileImage({ userId, fileId }) {
-	const url = `${process.env.CLIENT_URL}/files/${fileId}`;
+async function updateProfileImage({ userId, fileId, host }) {
+	const url = `${host}/files/${fileId}`;
 	return await UserModel.findByIdAndUpdate(
 		userId,
 		{ profile_image: url },

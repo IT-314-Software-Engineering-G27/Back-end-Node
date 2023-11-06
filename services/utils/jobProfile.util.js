@@ -7,6 +7,7 @@ function transformInputToJobProfile({ jobProfile }) {
         posting_location: jobProfile.posting_location,
         requirements: jobProfile.requirements,
         salary: jobProfile.salary,
+        deadline: jobProfile.deadline,
         compensations: jobProfile.compensations,
         duration: jobProfile.duration,
     }

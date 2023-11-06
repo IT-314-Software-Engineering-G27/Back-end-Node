@@ -1,4 +1,4 @@
-const { getJobProfile } = require("../services/jobProfile.service");
+const { getJobProfile, getJobProfileStatus } = require("../services/jobProfile.service");
 const { listJobProfiles, listApplications, deleteJobProfile, deepSearchJobProfiles, createJobProfile, getJobProfileBasic, updateJobProfile, } = require("../services/jobProfile.service");
 const { createJobApplication } = require("../services/jobApplication.service");
 const { transformInputToJobProfile } = require("../services/utils/jobProfile.util");
@@ -64,6 +64,23 @@ const JobProfileController = {
             next(error);
         }
     },
+    getStatus: async (req, res, next) => {
+        try {
+            const individualId = req.user.individual;
+            if (!individualId) throw new BadRequestError('Individual id is required');
+            const jobProfileId = req.params.id;
+            const jobApplication = await getJobProfileStatus({ individualId, jobProfileId });
+            res.json({
+                message: "Fetched job profile status successfully",
+                payload: {
+                    jobApplication
+                }
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    },
     getApplications: async (req, res, next) => {
         try {
             const { page } = req.query;
@@ -71,7 +88,7 @@ const JobProfileController = {
             res.json({
                 message: "Fetched applicants successfully",
                 payload: {
-                    applications,
+                    jobApplications,
                 }
             });
         } catch (error) {
@@ -86,7 +103,7 @@ const JobProfileController = {
             res.json({
                 message: "Job application created successfully",
                 payload: {
-                    application: newJobApplication,
+                    jobApplication: newJobApplication,
                 }
             });
         } catch (error) {

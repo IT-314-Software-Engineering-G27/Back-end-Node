@@ -28,9 +28,9 @@ const JobProfileSchema = new Schema({
         maxlength: [1024, "Posting location cannot be more than 1024 characters"],
         index: true,
     },
-    requirements: [{
+    requirements: {
         type: Schema.Types.String,
-    }],
+    },
     salary: {
         type: Schema.Types.Number,
         required: [true, "Salary required"],
@@ -41,6 +41,10 @@ const JobProfileSchema = new Schema({
     posted: {
         type: Schema.Types.Date,
         default: Date.now(),
+    },
+    deadline: {
+        type: Schema.Types.Date,
+        required: [true, "Deadline required"],
     },
     duration: {
         type: Schema.Types.String,

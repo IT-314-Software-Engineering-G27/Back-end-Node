@@ -1,11 +1,12 @@
 const { BadRequestError } = require('../errors');
 const JobProfileModel = require('../models/jobProfile.model');
 const OrganizationModel = require('../models/organization.model');
+const IndividualModel = require('../models/individual.model');
 
 async function listJobProfiles({ query, page, limit }) {
     return (await JobProfileModel.find({
         $or: [
-            { title: { $regex: `^${query}`, $options: 'i', }, },
+            { title: { $regex: `${query}`, $options: 'i', }, },
             { posting_location: { $regex: `^${query}`, $options: 'i', }, },
         ]
     }, {
@@ -65,6 +66,23 @@ async function getJobProfileBasic({ jobProfileId }) {
     }).exec();
 };
 
+async function getJobProfileStatus({ individualId, jobProfileId }) {
+    const { job_applications } = await IndividualModel.findById(individualId, {
+        job_applications: 1,
+    }).populate({
+        path: 'job_applications',
+        select: {
+            job_profile: 1,
+            status: 1,
+        },
+    }).exec();
+    const job_application = job_applications.find((job_application) => job_application.job_profile == jobProfileId);
+    if (!job_application) return {
+        status: 'Not Applied',
+    };
+    return job_application; 
+}
+
 async function listApplications({ jobProfileId, query, page, limit }) {
     const { job_applications } = await JobProfileModel.findById(jobProfileId, {
         job_applications: 1,
@@ -75,7 +93,7 @@ async function listApplications({ jobProfileId, query, page, limit }) {
         }
     }).exec();
     return job_applications.filter((job_application) => {
-        if(!query) return true;
+        if (!query) return true;
         return String(job_application.cover_letter).test(`^${query}/i`);
     }).slice(page * limit, (page + 1) * limit).map((job_application) => job_application._id);
 }
@@ -93,6 +111,7 @@ async function deleteJobProfile({ jobProfileId }) {
 module.exports = {
     listJobProfiles,
     getJobProfileBasic,
+    getJobProfileStatus,
     deepSearchJobProfiles,
     updateJobProfile,
     listApplications,
