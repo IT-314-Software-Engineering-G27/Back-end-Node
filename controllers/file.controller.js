@@ -18,6 +18,7 @@ const FileController = {
             }
         });
     },
+    
     updateProfile: async (req, res) => {
         try {
             const newUser = await updateProfileImage({
@@ -32,6 +33,28 @@ const FileController = {
             });
         }
         catch (error) {
+            next(error);
+        }
+    },
+
+    uploadPostImage: async (req, res, next) => {
+        try {
+            const file = req.file;
+
+            if (!file) {
+                throw new BadRequestError('Invalid image file');
+            }
+
+            const postId = req.body.postId;
+            
+            const fileId = await uploadFile({ file });
+            await createPostImage({ postId, fileId });
+
+            res.json({
+                message: 'Post image uploaded successfully',
+                payload: { fileId },
+            });
+        } catch (error) {
             next(error);
         }
     },

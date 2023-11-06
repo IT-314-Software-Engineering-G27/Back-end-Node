@@ -8,6 +8,7 @@ const connectionRouter = require("./connection.route");
 const jobApplicationRouter = require("./jobApplication.route");
 const messageRouter = require("./message.route");
 const resetRouter = require("./reset.route");
+const postRouter = require("./post.route");
 const generate = require("../generators");
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.use("/job-applications", jobApplicationRouter);
 router.use("/connections", connectionRouter);
 router.use("/messages", messageRouter);
 router.use("/reset", resetRouter);
+router.use("/posts", postRouter);
 
 router.post("/test", async (req, res, next) => {
 	try {

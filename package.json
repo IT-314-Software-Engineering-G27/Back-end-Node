@@ -25,5 +25,9 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0"
-  }
+  },
+  "description": "StartApp",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC"
 }
