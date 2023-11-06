@@ -34,13 +34,34 @@ async function getConnectionsForUser({ userId }) {
     return connections.map((connection) => connection.toString());
 };
 
-async function getConnection({ connectionId }) {
+async function getConnectionBasic({ connectionId }) {
     const connection = await ConnectionModel.findById(connectionId, {
         from: 1,
         to: 1,
         status: 1,
     }).exec();
     return connection;
+}
+
+async function getConnection({ connectionId, role }) {
+    if (role == 'from') {
+        return await ConnectionModel.findByIdAndUpdate(connectionId, {
+            from_last_seen: Date.now(),
+        }, { new: true }).select({
+            last_seen: "$to_last_seen",
+            recipient: "$to",
+            status: 1,
+        }).exec();
+    }
+    else if (role == 'to') {
+        return await ConnectionModel.findByIdAndUpdate(connectionId, {
+            to_last_seen: Date.now(),
+        }, { new: true, }).select({
+            last_seen: "$from_last_seen",
+            recipient: "$from",
+            status: 1,
+        }).exec();
+    }
 }
 
 async function getConnectionMessages({ connectionId, page, limit }) {
@@ -72,6 +93,7 @@ async function deleteConnection({ connectionId }) {
 
 module.exports = {
     createConnection,
+    getConnectionBasic,
     getConnectionsForUser,
     getConnectionMessages,
     getConnection,

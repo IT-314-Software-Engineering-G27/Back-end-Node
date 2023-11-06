@@ -41,8 +41,7 @@ const UserSchema = new Schema({
 		type: Schema.Types.String,
 	},
 	profile_image: {
-		type: Schema.Types.ObjectId,
-		ref: "Storage.Files",
+		type: Schema.Types.String,
 	},
 	posts: {
 		type: [

@@ -1,11 +1,11 @@
 const { UnauthorizedError, NotFoundError } = require("../errors");
-const { getConnection } = require("../services/connection.service");
+const { getConnectionBasic } = require("../services/connection.service");
 
 async function connectionRoleMiddleware(req, res, next) {
     try {
         const user = req.user;
         const connectionId = req.params.id;
-        const connection = await getConnection({ connectionId });
+        const connection = await getConnectionBasic({ connectionId });
         if (!connection)
             throw new NotFoundError("No connection found");
         req.user.connection = { status: connection.status };

@@ -24,6 +24,14 @@ async function updateProfileImage({ userId, fileId, host }) {
 	).exec();
 }
 
+async function getUserBasic({ userId }) {
+	return await UserModel.findById(userId, {
+		username: 1,
+		profile_image: 1,
+		email: 1,
+	}).exec();
+};
+
 async function getUser({ userId }) {
 	return await UserModel.findById(userId, {
 		password: 0,
@@ -50,6 +58,7 @@ async function deleteUser({ userId }) {
 module.exports = {
 	createUser,
 	getUser,
+	getUserBasic,
 	updateUser,
 	deleteUser,
 	updateProfileImage,

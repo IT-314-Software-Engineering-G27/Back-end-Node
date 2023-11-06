@@ -1,5 +1,6 @@
 const { createConnection, getConnectionsForUser, getConnection, getConnectionMessages, rejectConnection, acceptConnection, deleteConnection } = require('../services/connection.service');
 const { createMessage } = require('../services/message.service');
+const { getUserBasic } = require('../services/user.service');
 const { ForbiddenError, BadRequestError } = require('../errors');
 const LIMIT_PER_PAGE = 10;
 const ConnectionController = {
@@ -40,11 +41,14 @@ const ConnectionController = {
     },
     get: async (req, res, next) => {
         try {
-            const connection = await getConnection({ connectionId: req.params.id });
+            const role = req.user.connection.role;
+            const connection = (await getConnection({ connectionId: req.params.id, role })).toJSON();
+            const recipient = await getUserBasic({ userId: connection.recipient });
+            connection.recipient = recipient;
             res.json({
                 message: 'Connection retrieved successfully',
                 payload: {
-                    connection,
+                    connection
                 }
             });
         }
