@@ -67,7 +67,7 @@ async function getConnection({ connectionId, role }) {
 async function getConnectionMessages({ connectionId, page, limit }) {
     const { messages } = await ConnectionModel.findById(connectionId, {
         messages: {
-            $slice: [- page * limit - 1, limit],
+            $slice: [- (page + 1) * limit - 1, limit],
         },
     }).exec();
     return messages;
