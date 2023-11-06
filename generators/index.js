@@ -5,6 +5,7 @@ const { generateJobProfile } = require('./jobProfile.generator');
 const { generateJobApplication } = require('./jobApplication.generator');
 const { generateConnection, generateMessage } = require('./connection.generator');
 
+const fs = require('fs');
 const { createIndividual } = require('../services/individual.service');
 const { createOrganization } = require('../services/organization.service');
 const { createJobProfile } = require('../services/jobProfile.service');
@@ -23,6 +24,7 @@ module.exports = async () => {
     const organizations = [];
     const connections = [];
 
+    const users = [];
     const userIds = [];
     const names = [];
     for (let i = 0; i < NUM_OF_INDIVIDUALS; i++) {
@@ -39,8 +41,13 @@ module.exports = async () => {
         });
         const user = generateUser({ first_name: individual.first_name, last_name: individual.last_name });
         individual.user = user;
+        users.push({
+            email: user.email,
+            password: user.password
+        });
         individuals.push(individual);
     }
+
 
     const individualIds = await Promise.all(individuals.map(async (individual) => {
         const { _id, user } = await createIndividual({ individual });
@@ -62,9 +69,20 @@ module.exports = async () => {
         });
         const user = generateUser({ first_name: organization.CEOname.split(' ').reverse()[0], last_name: organization.company_name });
         user.role = 'organization';
+        users.push({
+            email: user.email,
+            password: user.password
+        });
         organization.user = user;
         organizations.push(organization);
     }
+
+    const auth_list = users.map((user) => {
+        return {
+            email: user.email,
+            password: user.password
+        };
+    });
 
     const organizationIds = await Promise.all(organizations.map(async (organization) => {
         const { _id, user } = await createOrganization({ organization });
@@ -107,5 +125,6 @@ module.exports = async () => {
             await createMessage({ message, connectionId, role: faker.helpers.arrayElement(['from', 'to']) });
         }
     }));
-    return '';
+
+    return auth_list;
 };
