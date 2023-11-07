@@ -1,13 +1,13 @@
 const { ForbiddenError, NotFoundError } = require('../errors');
 const { getMessageBasic } = require('../services/message.service');
-const { getConnection } = require('../services/connection.service');
+const { getConnectionBasic } = require('../services/connection.service');
 async function messageMiddleware(req, res, next) {
     try {
         const userId = req.user._id;
         const message = await getMessageBasic({ messageId: req.params.id });
         if (!message)
             throw new NotFoundError('Message not found.');
-        const connection = await getConnection({ connectionId: message.connection });
+        const connection = await getConnectionBasic({ connectionId: message.connection });
         req.user.message = {};
         if (connection.from == userId) {
             if (message.direction == 'from-to')

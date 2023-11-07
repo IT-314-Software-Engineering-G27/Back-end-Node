@@ -2,3 +2,4 @@
 
 .env
 bash.exe.stackdump
+generators/auth_list.json

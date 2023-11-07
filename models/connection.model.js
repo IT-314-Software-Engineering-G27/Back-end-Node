@@ -13,6 +13,14 @@ const ConnectionSchema = new Schema({
         ref: "User",
         required: [true, "To is required"],
     },
+    from_last_seen: {
+        type: Schema.Types.Date,
+        default: Date.now(),
+    },
+    to_last_seen: {
+        type: Schema.Types.Date,
+        default: Date.now(),
+    },
     status: {
         type: Schema.Types.String,
         enum: ["pending", "accepted", "rejected"],

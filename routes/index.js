@@ -34,16 +34,16 @@ router.use("/messages", messageRouter);
 router.use("/reset", resetRouter);
 router.use("/posts", postRouter);
 
-router.post("/test", async (req, res, next) => {
-	try {
-		await generate();
-		res.json({
-			message: "Kaboom!",
-			payload: {},
-		});
-	} catch (error) {
-		next(error);
-	}
-});
+// router.post("/test", async (req, res, next) => {
+// 	try {
+// 		const auth_list = await generate();
+// 		res.json({
+// 			message: "Kaboom!",
+// 			payload: auth_list,
+// 		});
+// 	} catch (error) {
+// 		next(error);
+// 	}
+// });
 
 module.exports = router;
