@@ -12,6 +12,9 @@ async function tokenToIDMiddleware(req, res, next) {
         }
         const authServiceResponse = await verifyToken({ token });
         req.user = authServiceResponse.user;
+        if(!req.user)
+            throw new UnauthorizedError("Invalid token");
+        
         next();
     }
     catch (error) {
