@@ -3,10 +3,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
-	user: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        unique: true,
         required: [true, "User is required"],
     },
     title: {
@@ -33,31 +32,26 @@ const PostSchema = new Schema({
         default: Date.now(),
     },
     image: {
-		type: Schema.Types.ObjectId,
-		ref: "Storage.Files",
-	},
+        type: Schema.Types.String,
+    },
     likes: {
-        count: {
-          type: Number,
-          default: 0,
-        },
-        users: [
-          {
+        type: [{
             type: Schema.Types.ObjectId,
             ref: "User",
-          },
-        ],
+        }]
     },
 });
 
 PostSchema.index({
     title: "text",
-    subjct: "text",
+    subject: "text",
+    description: "text",
 }, {
     name: "post_text_index",
     weights: {
         title: 10,
-        subject: 3,
+        subject: 7,
+        description: 3,
     },
 });
 
