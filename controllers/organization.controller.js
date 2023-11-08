@@ -64,7 +64,6 @@ const OrganizationController = {
     },
     getProfile: async (req, res, next) => {
         try {
-            const { id } = req.user;
             const organization = await getOrganizationProfile({ organizationId: req.user.organization });
             res.json({
                 message: "Fetched organization successfully",

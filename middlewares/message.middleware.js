@@ -1,6 +1,7 @@
 const { ForbiddenError, NotFoundError } = require('../errors');
 const { getMessageBasic } = require('../services/message.service');
 const { getConnectionBasic } = require('../services/connection.service');
+
 async function messageMiddleware(req, res, next) {
     try {
         const userId = req.user._id;

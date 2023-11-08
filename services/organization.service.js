@@ -133,7 +133,6 @@ async function addJobProfile({ organizationId, jobProfileId }) {
     }, {
         new: true,
     }).exec();
-    console.log("Job profile added");
 }
 
 
