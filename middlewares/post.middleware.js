@@ -1,16 +1,14 @@
-const { UnauthorizedError, NotFoundError } = require('../errors');
-const { getUser } = require('../services/user.service');
+const { UnauthorizedError, NotFoundError, ForbiddenError } = require('../errors');
+const { getPostBasic } = require('../services/post.service');
 
-async function postValidationMiddleware(req, res, next) {
+async function postMiddleware(req, res, next) {
     try {
         const userId = req.user._id;
-        const user = await getUser({ userId });
-        if (!user) {
-            throw new NotFoundError('User not found');
-        }
-
-        req.user = user;
-
+        const postId = req.params.id;
+        const { user } = await getPostBasic({ postId });
+        if (!user) throw new NotFoundError('Post not found');
+        if (user._id.toString() !== userId.toString())
+            throw new ForbiddenError('You are not allowed to edit this post');
         next();
     } catch (error) {
         next(error);
@@ -19,5 +17,5 @@ async function postValidationMiddleware(req, res, next) {
 
 
 module.exports = {
-    postValidationMiddleware,
+    postMiddleware,
 };
