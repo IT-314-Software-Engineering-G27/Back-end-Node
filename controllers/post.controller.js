@@ -63,11 +63,11 @@ const PostController = {
     },
     getStatus: async (req, res, next) => {
         try {
-            const { isLiked } = await getPostStatus({ postId: req.params.id, userId: req.user._id });
+            const status = await getPostStatus({ postId: req.params.id, userId: req.user._id });
             res.json({
                 message: 'Fetched post status successfully',
                 payload: {
-                    isLiked,
+                    status,
                 },
             });
         } catch (error) {

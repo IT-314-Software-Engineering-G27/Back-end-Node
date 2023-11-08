@@ -69,7 +69,9 @@ async function getPostBasic({ postId }) {
 };
 
 async function getPost({ postId }) {
-  const post = await PostModel.findById(postId).populate({
+  const post = await PostModel.findById(postId, {
+    likes: 0,
+  }).populate({
     path: 'user',
     select: {
       username: 1,
@@ -92,15 +94,14 @@ async function deletePost({ postId, userId }) {
 };
 
 async function getPostStatus({ postId, userId }) {
-  const isLiked = await PostModel.findById(postId, {
-    likes: {
-      $elemMatch: {
-        $eq: userId,
-      },
-    },
+  const { likes } = await PostModel.findById(postId, {
+    likes: 1,
   });
+
+  const isLiked = likes.filter((like) => like.toString() === userId.toString());
   return {
-    isLiked: isLiked.likes.length > 0,
+    isLiked: isLiked.length > 0,
+    likes: likes.length,
   };
 };
 
