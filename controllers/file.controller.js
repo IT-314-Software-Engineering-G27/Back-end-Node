@@ -1,5 +1,6 @@
 const { uploadFile, retrieveFile } = require('../services/file.service');
 const { updateProfileImage } = require('../services/user.service');
+const { updatePostImage } = require('../services/post.service');
 const FileController = {
     get: async (req, res) => {
         try {
@@ -18,7 +19,6 @@ const FileController = {
             }
         });
     },
-    
     updateProfile: async (req, res) => {
         try {
             const url = `${req.protocol}://${req.get('host')}`;
@@ -38,23 +38,19 @@ const FileController = {
             next(error);
         }
     },
-
-    uploadPostImage: async (req, res, next) => {
+    updatePostImage: async (req, res, next) => {
         try {
-            const file = req.file;
-
-            if (!file) {
-                throw new BadRequestError('Invalid image file');
-            }
-
-            const postId = req.body.postId;
-            
-            const fileId = await uploadFile({ file });
-            await createPostImage({ postId, fileId });
-
+            const url = `${req.protocol}://${req.get('host')}`;
+            const newPost = await updatePostImage({
+                postId: req.params.id,
+                fileId: req.file._id,
+                host: url,
+            });
             res.json({
-                message: 'Post image uploaded successfully',
-                payload: { fileId },
+                message: 'Post image updated successfully',
+                payload: {
+                    post: newPost,
+                }
             });
         } catch (error) {
             next(error);
