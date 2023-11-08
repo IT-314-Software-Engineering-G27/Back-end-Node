@@ -13,7 +13,7 @@ const { createJobProfile } = require('../services/jobProfile.service');
 const { createJobApplication } = require('../services/jobApplication.service');
 const { createConnection } = require('../services/connection.service');
 const { createMessage } = require('../services/message.service');
-const { createPost } = require('../services/post.service');
+const { createPost, likePost } = require('../services/post.service');
 
 const { faker } = require('@faker-js/faker');
 
@@ -125,7 +125,7 @@ module.exports = async () => {
     }));
 
     await Promise.all(connectionIds.map(async (connectionId) => {
-        for (let i = 0; i < faker.number.int({ max: 20 }); i++) {
+        for (let i = 0; i < faker.number.int({ min: 20, max: 40 }); i++) {
             const message = generateMessage();
             await createMessage({ message, connectionId, role: faker.helpers.arrayElement(['from', 'to']) });
         }
@@ -135,13 +135,12 @@ module.exports = async () => {
         const post = generatePost();
         const { _id } = await createPost({ post });
         posts.push(_id);
-        
-        const numLikes = faker.random.number({ min: 0, max: 50 });
+        const numLikes = faker.number.int({ min: 0, max: 20 });
         const likedBy = faker.helpers.arrayElements(userIds, numLikes);
         await Promise.all(likedBy.map(async (userId) => {
-            await createLike({ postId: _id, userId });
+            await likePost({ postId: _id, userId });
         }));
     }
-    
+
     return auth_list;
 };
