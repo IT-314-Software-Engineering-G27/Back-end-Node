@@ -17,11 +17,10 @@ const { createPost, likePost } = require('../services/post.service');
 
 const { faker } = require('@faker-js/faker');
 
-const NUM_OF_INDIVIDUALS = 500;
+const NUM_OF_INDIVIDUALS = 200;
 const NUM_OF_ORGANIZATIONS = 200;
 const NUM_OF_JOB_PROFILES = 150;
-const NUM_OF_CONNECTIONS = 250;
-const NUM_OF_POSTS = 100;
+const NUM_OF_POSTS = 300;
 
 module.exports = async () => {
     const individuals = [];
@@ -111,13 +110,15 @@ module.exports = async () => {
         }));
     }));
 
-    const user1List = faker.helpers.arrayElements(userIds, NUM_OF_CONNECTIONS);
-    const user2List = faker.helpers.arrayElements(userIds, NUM_OF_CONNECTIONS);
+    const connectionFromIds = userIds.slice(0, (userIds.length / 2));
+    const connectionToIds = userIds.slice((userIds.length / 2), userIds.length);
 
-    for (let i = 0; i < NUM_OF_ORGANIZATIONS; i++) {
-        const connection = generateConnection({ userId1: user1List[i], userId2: user2List[i] });
-        connections.push(connection);
-    }
+    connectionFromIds.forEach((userId1) => {
+        connectionToIdsForUser1 = faker.helpers.arrayElements(connectionToIds, faker.number.int({ min: 2, max: 5 }));
+        connectionToIdsForUser1.forEach((userId2) => {
+            connections.push(generateConnection({ userId1, userId2 }));
+        });
+    });
 
     const connectionIds = await Promise.all(connections.map(async (connection) => {
         const { _id } = await createConnection({ connection });
@@ -131,16 +132,21 @@ module.exports = async () => {
         }
     }));
 
+
     for (let i = 0; i < NUM_OF_POSTS; i++) {
         const post = generatePost();
-        const { _id } = await createPost({ post });
-        posts.push(_id);
+        posts.push(post);
+    }
+
+    const postIds = await Promise.all(posts.map(async (post) => {
+        const { _id } = await createPost({ post, userId: faker.helpers.arrayElement(userIds) });
         const numLikes = faker.number.int({ min: 0, max: 20 });
         const likedBy = faker.helpers.arrayElements(userIds, numLikes);
         await Promise.all(likedBy.map(async (userId) => {
             await likePost({ postId: _id, userId });
         }));
-    }
+        return _id;
+    }));
 
     return auth_list;
 };
