@@ -8,6 +8,8 @@ function validateUser({ user }) {
 		throw new BadRequestError("Email is not valid");
 	if (!validatePassword(user.password))
 		throw new BadRequestError("Password is not valid");
+	if (!validateProfileImage(user.profile_image))
+		throw new BadRequestError("Profile image is not valid");
 	return true;
 }
 
@@ -18,6 +20,7 @@ function transformInputToUser({ user }) {
 		password: user.password,
 		username: user.username,
 		role: user.role,
+		profile_image: user.profile_image,
 		phone_number: user.phone_number,
 	};
 }
@@ -37,6 +40,11 @@ function validatePassword(password) {
 	return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
 		password
 	);
+}
+
+function validateProfileImage(profile_image) {
+	if (!profile_image) return true;
+	return /^https?:\/\/.*\.(?:png|jpg|jpeg|gif)$/i.test(profile_image);
 }
 
 module.exports = {
