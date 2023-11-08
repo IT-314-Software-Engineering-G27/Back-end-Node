@@ -4,8 +4,7 @@ const { BadRequestError } = require("../errors");
 const ResetController = {
 	create: async (req, res, next) => {
 		try {
-			const url = `${req.protocol}://${req.get("host")}`;
-			const reset = await createReset({ email: req.body.email, host: url });
+			const reset = await createReset({ email: req.body.email });
 			res.json({
 				message: "Reset created successfully",
 				payload: {

@@ -1,6 +1,6 @@
 const UserModel = require("../models/user.model");
 const ResetModel = require("../models/reset.model");
-const { NotFoundError, UnauthorizedError } = require("../errors");
+const { NotFoundError, UnauthorizedError, ForbiddenError } = require("../errors");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -15,20 +15,26 @@ const transporter = nodemailer.createTransport({
 	},
 });
 
-async function createReset({ email,host }) {
-	const user = await UserModel.findOne({ email });
-	if (!user) throw new NotFoundError("User not found");
-	const otp = crypto.randomBytes(32).toString("hex");
-	const reset = await ResetModel.create({ userId: user._id, otp });
-	await transporter.sendMail({
-		from: `${process.env.NODEMAILER_EMAIL}`,
-		to: email,
-		subject: "StartApp Password Reset",
-		html: `<p>Use this OTP to reset your password: <b>${otp}</b></p>
+async function createReset({ email }) {
+	try {
+		const user = await UserModel.findOne({ email });
+		if (!user) throw new NotFoundError("User not found");
+		const otp = crypto.randomBytes(32).toString("hex");
+		const reset = await ResetModel.create({ userId: user._id, otp });
+		await transporter.sendMail({
+			from: `${process.env.NODEMAILER_EMAIL}`,
+			to: email,
+			subject: "StartApp Password Reset",
+			html: `<p>Use this OTP to reset your password: <b>${otp}</b></p>
         <p>This OTP will expire in 1 hour</p>
-        <p>Password Reset Link: <a href="${host}/reset/${reset._id}">Click Here</a></p>`,
-	});
-	return reset;
+        <p>Password Reset Link: <a href="http://localhost:3000/password-reset/${reset._id}">Click Here</a></p>`,
+		});
+		return reset;
+	}
+	catch (err) {
+		if (err.code === 11000) throw new ForbiddenError("Reset already requested");
+		throw new Error(err);
+	}
 }
 
 async function applyReset({ otp, resetId, password }) {
