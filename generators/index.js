@@ -148,5 +148,7 @@ module.exports = async () => {
         return _id;
     }));
 
+    fs.writeFileSync('./generators/auth_list.json', JSON.stringify(auth_list));
+
     return auth_list;
 };
