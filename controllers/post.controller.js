@@ -1,13 +1,14 @@
 const { BadRequestError, NotFoundError } = require('../errors');
-const { createPost, updatePost, getPost, deletePost, listPosts, likePost, unlikePost } = require('../services/post.service');
+const { createPost, updatePost, getPost, deletePost, listPosts, likePost, unlikePost, getPostBasic, deepSearchPosts, getPostStatus } = require('../services/post.service');
+const { validatePost, transformInputToPost } = require('../services/utils/post.util');
 
 const LIMIT_PER_PAGE = 5;
 
 const PostController = {
     list: async (req, res, next) => {
         try {
-            const { page } = req.query;
-            const posts = await listPosts({ page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const { page, query, deep } = req.query;
+            const posts = deep === "true" ? await deepSearchPosts({ query: query ?? '', page: page ?? 0, limit: LIMIT_PER_PAGE }) : await listPosts({ query: query ?? '', page: page ?? 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: 'Fetched posts successfully',
                 payload: {
@@ -18,16 +19,12 @@ const PostController = {
             next(error);
         }
     },
-
     create: async (req, res, next) => {
         try {
             const { post } = req.body;
-            
-            if (!post || !post.title || !post.content) {
-                throw new BadRequestError('Title and content are required for creating a post.');
-            }
-    
-            const newPost = await createPost({ post });
+            validatePost({ post });
+            const transformedPost = transformInputToPost({ post });
+            const newPost = await createPost({ post: transformedPost, userId: req.user._id });
             res.json({
                 message: 'Created post successfully',
                 payload: {
@@ -38,12 +35,9 @@ const PostController = {
             next(error);
         }
     },
-    
-
     get: async (req, res, next) => {
         try {
-            const { id } = req.params;
-            const post = await getPost({ postId: id });
+            const post = await getPost({ postId: req.params.id });
             res.json({
                 message: 'Fetched post successfully',
                 payload: {
@@ -54,12 +48,38 @@ const PostController = {
             next(error);
         }
     },
-
+    getBasic: async (req, res, next) => {
+        try {
+            const post = await getPostBasic({ postId: req.params.id });
+            res.json({
+                message: 'Fetched post successfully',
+                payload: {
+                    post,
+                },
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    getStatus: async (req, res, next) => {
+        try {
+            const { isLiked } = await getPostStatus({ postId: req.params.id, userId: req.user._id });
+            res.json({
+                message: 'Fetched post status successfully',
+                payload: {
+                    isLiked,
+                },
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
     update: async (req, res, next) => {
         try {
             const { post } = req.body;
-            const { id } = req.params;
-            const updatedPost = await updatePost({ postId: id, post });
+            validatePost({ post });
+            const transformedPost = transformInputToPost({ post });
+            const updatedPost = await updatePost({ postId: req.params.id, post: transformedPost });
             res.json({
                 message: 'Updated post successfully',
                 payload: {
@@ -70,7 +90,6 @@ const PostController = {
             next(error);
         }
     },
-
     delete: async (req, res, next) => {
         try {
             const { id } = req.params;
@@ -83,12 +102,10 @@ const PostController = {
             next(error);
         }
     },
-
     like: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const { userId } = req.body;
-            const post = await likePost({ postId: id, userId });
+            const post = await likePost({ postId: id, userId: req.user._id });
             res.json({
                 message: 'Liked post successfully',
                 payload: {
@@ -99,12 +116,10 @@ const PostController = {
             next(error);
         }
     },
-
     unlike: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const { userId } = req.body; // Adjust to get user ID
-            const post = await unlikePost({ postId: id, userId });
+            const post = await unlikePost({ postId: id, userId: req.user._id });
             res.json({
                 message: 'Unliked post successfully',
                 payload: {
