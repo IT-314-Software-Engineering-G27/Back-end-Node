@@ -69,6 +69,14 @@ async function getEvent({ eventId }) {
     }).exec();
 }
 
+async function getEventBasic({ eventId }) {
+    return await EventModel.findById(eventId, {
+        registrations: 0,
+        description: 0,
+        requirements: 0,
+    });
+}
+
 async function getEventRegistrations({ eventId }) {
     const event = (await EventModel.findById(eventId, {
         registrations: 1,
@@ -159,6 +167,7 @@ module.exports = {
     listAllEvents,
     listCurrentEvents,
     getEventStatus,
+    getEventBasic,
     getEventRegistrations,
     registerForEvent,
     deregisterForEvent,

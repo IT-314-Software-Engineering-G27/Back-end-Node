@@ -7,6 +7,7 @@ const { tokenToIDMiddleware } = require('../middlewares/auth.middleware');
 eventRouter.post('/', tokenToIDMiddleware, eventMiddleware, eventController.create);
 eventRouter.get('/', eventController.list);
 eventRouter.get('/:id', eventController.get);
+eventRouter.get('/:id/basic', eventController.getBasic);
 eventRouter.get('/:id/status', tokenToIDMiddleware, eventController.getStatus);
 eventRouter.get('/:id/registrations', eventController.getRegistrations);
 eventRouter.post('/:id/registrations', tokenToIDMiddleware, eventController.register);

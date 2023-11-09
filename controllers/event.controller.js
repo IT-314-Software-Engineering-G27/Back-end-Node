@@ -1,5 +1,5 @@
 const { BadRequestError, ForbiddenError } = require('../errors');
-const { getEvent, listCurrentEvents, listAllEvents, listPastEvents, listFutureEvents, createEvent, updateEvent, deleteEvent, registerForEvent, getEventRegistrations, deregisterForEvent, getEventStatus } = require('../services/event.service');
+const { getEvent, listCurrentEvents, listAllEvents, listPastEvents, listFutureEvents, createEvent, updateEvent, deleteEvent, registerForEvent, getEventRegistrations, deregisterForEvent, getEventStatus, getEventBasic } = require('../services/event.service');
 const { transformInputToEvent, validateEvent } = require('../services/utils/event.util');
 const { transformInputToRegistration } = require('../services/utils/registration.util');
 const LIMIT_PER_PAGE = 10;
@@ -54,6 +54,20 @@ const EventsController = {
         try {
             const { id } = req.params;
             const event = await getEvent({ eventId: id });
+            res.json({
+                message: 'Fetched event successfully',
+                payload: {
+                    event,
+                },
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    getBasic: async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const event = await getEventBasic({ eventId: id });
             res.json({
                 message: 'Fetched event successfully',
                 payload: {
