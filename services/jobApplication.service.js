@@ -38,8 +38,13 @@ async function createJobApplication({
 async function getJobApplicationsForIndividual({ individualId }) {
 	const { job_applications } = await IndividualModel.findById(individualId, {
 		job_applications: 1,
+	}).populate({
+		path: "job_applications",
+		select: {
+			job_profile: 1,
+		}
 	}).exec();
-	return job_applications.map((jobApplication) => jobApplication.toString());
+	return job_applications;
 }
 
 async function getJobApplication({ jobApplicationId }) {
@@ -71,12 +76,8 @@ async function updateJobApplication({
 }) {
 	const jobApplication = await JobApplicationModel.findByIdAndUpdate(
 		jobApplicationId,
-		{
-			cover_letter,
-		},
-		{
-			new: true,
-		}
+		{ cover_letter, },
+		{ new: true, }
 	).exec();
 	return jobApplication;
 }
