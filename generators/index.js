@@ -5,6 +5,7 @@ const { generateJobProfile } = require('./jobProfile.generator');
 const { generateJobApplication } = require('./jobApplication.generator');
 const { generateConnection, generateMessage } = require('./connection.generator');
 const { generatePost } = require('./post.generator');
+const { generateEvent, generateRegistration } = require('./event.generator');
 
 const fs = require('fs');
 const { createIndividual } = require('../services/individual.service');
@@ -14,72 +15,76 @@ const { createJobApplication } = require('../services/jobApplication.service');
 const { createConnection } = require('../services/connection.service');
 const { createMessage } = require('../services/message.service');
 const { createPost, likePost } = require('../services/post.service');
-
+const { createEvent, registerForEvent } = require('../services/event.service');
 const { faker } = require('@faker-js/faker');
 
 const NUM_OF_INDIVIDUALS = 200;
 const NUM_OF_ORGANIZATIONS = 200;
 const NUM_OF_JOB_PROFILES = 150;
 const NUM_OF_POSTS = 300;
+const NUM_OF_EVENTS = 100;
+const NUM_OF_USERS = NUM_OF_INDIVIDUALS + NUM_OF_ORGANIZATIONS;
 
 module.exports = async () => {
-    const individuals = [];
-    const organizations = [];
+    const individuals = new Array(NUM_OF_INDIVIDUALS);
+    individuals.fill({});
+    const organizations = new Array(NUM_OF_ORGANIZATIONS);
+    organizations.fill({});
     const connections = [];
-    const posts = [];
-
+    const posts = new Array(NUM_OF_POSTS);
+    posts.fill({});
+    const events = new Array(NUM_OF_EVENTS);
+    events.fill({});
     const users = [];
     const userIds = [];
-    const names = [];
-    for (let i = 0; i < NUM_OF_INDIVIDUALS; i++) {
+    const names = new Set();
+
+    const individualIds = await Promise.all(individuals.map(async () => {
         let individual = generateIndividual();
-        while (names.includes({
+        while (names.has({
             first_name: individual.first_name,
             last_name: individual.last_name
         })) {
             individual = generateIndividual();
         };
-        names.push({
+        names.add({
             first_name: individual.first_name,
             last_name: individual.last_name
         });
-        const user = generateUser({ first_name: individual.first_name, last_name: individual.last_name });
-        individual.user = user;
+        const genUser = generateUser({ first_name: individual.first_name, last_name: individual.last_name });
+        individual.user = genUser;
         users.push({
-            email: user.email,
-            password: user.password
+            email: genUser.email,
+            password: genUser.password
         });
-        individuals.push(individual);
-    }
-
-
-    const individualIds = await Promise.all(individuals.map(async (individual) => {
         const { _id, user } = await createIndividual({ individual });
         userIds.push(user);
         return _id;
     }));
 
-    for (let i = 0; i < NUM_OF_ORGANIZATIONS; i++) {
+    const organizationIds = await Promise.all(organizations.map(async () => {
         let organization = generateOrganization();
-        while (names.includes({
+        while (names.has({
             first_name: organization.CEOname.split(' ').reverse()[0],
             last_name: organization.company_name
         })) {
             organization = generateOrganization();
         };
-        names.push({
+        names.add({
             first_name: organization.CEOname.split(' ').reverse()[0],
             last_name: organization.company_name
         });
-        const user = generateUser({ first_name: organization.CEOname.split(' ').reverse()[0], last_name: organization.company_name });
-        user.role = 'organization';
+        const genUser = generateUser({ first_name: organization.CEOname.split(' ').reverse()[0], last_name: organization.company_name });
+        genUser.role = 'organization';
         users.push({
-            email: user.email,
-            password: user.password
+            email: genUser.email,
+            password: genUser.password
         });
-        organization.user = user;
-        organizations.push(organization);
-    }
+        organization.user = genUser;
+        const { _id, user } = await createOrganization({ organization });
+        userIds.push(user);
+        return _id;
+    }));
 
     const auth_list = users.map((user) => {
         return {
@@ -87,12 +92,6 @@ module.exports = async () => {
             password: user.password
         };
     });
-
-    const organizationIds = await Promise.all(organizations.map(async (organization) => {
-        const { _id, user } = await createOrganization({ organization });
-        userIds.push(user);
-        return _id;
-    }));
 
     const organizationWithJobProfileIds = faker.helpers.arrayElements(organizationIds, NUM_OF_JOB_PROFILES);
 
@@ -133,12 +132,8 @@ module.exports = async () => {
     }));
 
 
-    for (let i = 0; i < NUM_OF_POSTS; i++) {
+    const postIds = await Promise.all(posts.map(async () => {
         const post = generatePost();
-        posts.push(post);
-    }
-
-    const postIds = await Promise.all(posts.map(async (post) => {
         const { _id } = await createPost({ post, userId: faker.helpers.arrayElement(userIds) });
         const numLikes = faker.number.int({ min: 0, max: 20 });
         const likedBy = faker.helpers.arrayElements(userIds, numLikes);
@@ -146,6 +141,17 @@ module.exports = async () => {
             await likePost({ postId: _id, userId });
         }));
         return _id;
+    }));
+
+    const eventIds = await Promise.all(events.map(async () => {
+        const event = generateEvent();
+        const { _id } = await createEvent({ event });
+        const numRegistrations = faker.number.int({ min: 0, max: 20 });
+        const registeredBy = faker.helpers.arrayElements(organizationIds, numRegistrations);
+        await Promise.all(registeredBy.map(async (organizationId) => {
+            const registration = generateRegistration();
+            await registerForEvent({ eventId: _id, organizationId, registration });
+        }));
     }));
 
     fs.writeFileSync('./generators/auth_list.json', JSON.stringify(auth_list));

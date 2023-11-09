@@ -1,25 +1,30 @@
 const { faker } = require("@faker-js/faker");
 
-function generateRequirements() {
-    const num_req = faker.number.int({ min: 1, max: 10 });
-    let req = [];
-    for (let i = 0; i < num_skills; i++) {
-        req.push(faker.lorem.words(3));
-    }
-    return req;
+function generateEvent() {
+    const start_time = faker.date.anytime();
+    const end_time = faker.date.between({ from: start_time, to: new Date(start_time.getTime() + 1000 * 60 * 60 * 24 * Math.floor(Math.random() * 30)) });
+    return {
+        title: faker.helpers.uniqueArray(faker.word.sample, faker.number.int({ min: 5, max: 8 })).join(' '),
+        description: faker.helpers.uniqueArray(faker.word.sample, faker.number.int({ min: 20, max: 30 })).join(' '),
+        start_time,
+        end_time,
+        last_registration_date: faker.date.between({ from: start_time, to: end_time }),
+    };
 }
 
-
-function generateEvent() {
+function generateRegistration() {
+    const images = [];
+    for (let i = 0; i < faker.number.int({ min: 0, max: 3 }); i++) {
+        images.push(faker.image.url());
+    }
     return {
-        title: faker.person.title(),
-        description: faker.lorem.sentences(3),
-        start_time: faker.date.anytime(),
-        end_time: faker.date.between({ from: start_time }), 
-        last_registration_date: faker.date.between({ from: start_time, to: end_time }) , 
-};
+        title: faker.helpers.uniqueArray(faker.word.sample, faker.number.int({ min: 5, max: 8 })).join(' '),
+        description: faker.helpers.uniqueArray(faker.word.sample, faker.number.int({ min: 20, max: 30 })).join(' '),
+        images,
+    }
 }
 
 module.exports = {
     generateEvent,
+    generateRegistration,
 };
