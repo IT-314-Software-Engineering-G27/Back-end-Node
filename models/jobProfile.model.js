@@ -40,7 +40,7 @@ const JobProfileSchema = new Schema({
     },
     posted: {
         type: Schema.Types.Date,
-        default: Date.now(),
+        default: Date.now,
     },
     deadline: {
         type: Schema.Types.Date,

@@ -25,7 +25,7 @@ const MessageSchema = new Schema({
     },
     sent_timestamp: {
         type: Schema.Types.Date,
-        default: Date.now(),
+        default: Date.now,
     },
     read_timestamp: {
         type: Schema.Types.Date,

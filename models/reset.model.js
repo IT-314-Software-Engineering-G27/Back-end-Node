@@ -17,7 +17,7 @@ const ResetSchema = new Schema({
 	},
 	createdAt: {
 		type: Schema.Types.Date,
-		default: Date.now(),
+		default: Date.now,
 		expires: EXPIRATION_TIME,
 	},
 });

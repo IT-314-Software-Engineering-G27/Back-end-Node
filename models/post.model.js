@@ -29,7 +29,7 @@ const PostSchema = new Schema({
     },
     time: {
         type: Schema.Types.Date,
-        default: Date.now(),
+        default: Date.now,
     },
     image: {
         type: Schema.Types.String,

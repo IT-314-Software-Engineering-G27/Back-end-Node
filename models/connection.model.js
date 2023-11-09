@@ -15,11 +15,11 @@ const ConnectionSchema = new Schema({
     },
     from_last_seen: {
         type: Schema.Types.Date,
-        default: Date.now(),
+        default: Date.now,
     },
     to_last_seen: {
         type: Schema.Types.Date,
-        default: Date.now(),
+        default: Date.now,
     },
     status: {
         type: Schema.Types.String,
