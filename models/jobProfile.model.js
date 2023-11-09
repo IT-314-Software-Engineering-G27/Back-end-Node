@@ -66,12 +66,14 @@ JobProfileSchema.index({
     title: "text",
     description: "text",
     posting_location: "text",
+    requirements: "text",
     compensations: "text",
 }, {
     name: "job_profile_text_index",
     weights: {
         title: 10,
         description: 3,
+        requirements: 8,
         posting_location: 8,
         compensations: 8,
     },
