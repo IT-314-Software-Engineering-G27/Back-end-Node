@@ -45,10 +45,10 @@ const OrganizationSchema = new Schema({
         }],
         default: [],
     },
-    events: {
+    registrations: {
         type: [{
             type: Schema.Types.ObjectId,
-            ref: 'Event',
+            ref: 'Registration',
         }],
         default: [],
     }
