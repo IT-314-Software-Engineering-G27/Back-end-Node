@@ -27,7 +27,7 @@ async function createReset({ email }) {
 			subject: "StartApp Password Reset",
 			html: `<p>Use this OTP to reset your password: <b>${otp}</b></p>
         <p>This OTP will expire in 1 hour</p>
-        <p>Password Reset Link: <a href="http://localhost:3000/password-reset/${reset._id}">Click Here</a></p>`,
+        <p>Password Reset Link: <a href="https://front-end-main-three.vercel.app/password-reset/${reset._id}">Click Here</a></p>`,
 		});
 		return reset;
 	}
