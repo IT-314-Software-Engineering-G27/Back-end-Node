@@ -9,6 +9,7 @@ const jobApplicationRouter = require("./jobApplication.route");
 const messageRouter = require("./message.route");
 const resetRouter = require("./reset.route");
 const postRouter = require("./post.route");
+const eventRouter = require("./event.route");
 const generate = require("../generators");
 const router = express.Router();
 
@@ -33,17 +34,18 @@ router.use("/connections", connectionRouter);
 router.use("/messages", messageRouter);
 router.use("/reset", resetRouter);
 router.use("/posts", postRouter);
+router.use("/events", eventRouter);
 
-// router.post("/test", async (req, res, next) => {
-// 	try {
-// 		const auth_list = await generate();
-// 		res.json({
-// 			message: "Kaboom!",
-// 			payload: auth_list,
-// 		});
-// 	} catch (error) {
-// 		next(error);
-// 	}
-// });
+router.post("/test", async (req, res, next) => {
+	try {
+		const auth_list = await generate();
+		res.json({
+			message: "Kaboom!",
+			payload: auth_list,
+		});
+	} catch (error) {
+		next(error);
+	}
+});
 
 module.exports = router;
