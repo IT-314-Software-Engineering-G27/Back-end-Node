@@ -10,6 +10,7 @@ const messageRouter = require("./message.route");
 const resetRouter = require("./reset.route");
 const postRouter = require("./post.route");
 const eventRouter = require("./event.route");
+const registrationRouter = require("./registration.route");
 const generate = require("../generators");
 const router = express.Router();
 
@@ -35,6 +36,7 @@ router.use("/messages", messageRouter);
 router.use("/reset", resetRouter);
 router.use("/posts", postRouter);
 router.use("/events", eventRouter);
+router.use("/registrations",registrationRouter);
 
 router.post("/test", async (req, res, next) => {
 	try {
