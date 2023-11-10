@@ -7,6 +7,7 @@ const RegistrationSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Event",
         required: [true, "Event is required"],
+        index: true,
     },
     organization: {
         type: Schema.Types.ObjectId,

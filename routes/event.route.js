@@ -9,7 +9,7 @@ eventRouter.get('/', eventController.list);
 eventRouter.get('/:id', eventController.get);
 eventRouter.get('/:id/basic', eventController.getBasic);
 eventRouter.get('/:id/status', tokenToIDMiddleware, eventController.getStatus);
-eventRouter.get('/:id/registrations', eventController.getRegistrations);
+eventRouter.get('/:id/registrations', eventController.listRegistrations);
 eventRouter.post('/:id/registrations', tokenToIDMiddleware, eventController.register);
 eventRouter.delete('/:id/registrations', tokenToIDMiddleware, eventController.deregister);
 eventRouter.put('/:id', tokenToIDMiddleware, eventMiddleware, eventController.update);
