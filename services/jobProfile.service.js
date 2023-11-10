@@ -93,11 +93,11 @@ async function listApplications({ jobProfileId, query, page, limit }) {
         }).exec();
         return job_applications;
     }
-    const job_applications = await JobApplicationModel.find(filter,
+    const job_applications = await JobApplicationModel.find({
+        $text: { $search: query, },
+    },
         {
-            score: {
-                $meta: 'textScore',
-            },
+            score: { $meta: 'textScore', },
             _id: 1,
             job_profile: 1,
         }).find({ job_profile: jobProfileId }).sort({

@@ -78,25 +78,14 @@ async function getEventBasic({ eventId }) {
 }
 
 async function listRegistrations({ eventId, query, page, limit }) {
-    if (!query.length) {
-        const { registrations } = await EventModel.findById(eventId, {
-            registrations: {
-                $slice: [- (page + 1) * limit - 1, limit]
-            },
-        }).exec();
-        return registrations;
-    }
-    const registrations = await RegistrationModel.find(filter, {
-        score: {
-            $meta: 'textScore',
+    const registrations = await RegistrationModel.find({
+        title: {
+            $regex: `${query}`, $options: 'i',
         },
+    }, {
         _id: 1,
         event: 1,
-    }).find({ event: eventId }).sort({
-        score: {
-            $meta: 'textScore',
-        },
-    }).skip(page * limit).limit(limit).exec();
+    }).find({ event: eventId }).skip(page * limit).limit(limit).exec();
     return registrations.map((registration) => registration._id);
 }
 
