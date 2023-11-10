@@ -15,6 +15,7 @@ const JobApplicationSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "JobProfile",
 		required: [true, "Job profile is required"],
+		index: true,
 	},
 	status: {
 		type: Schema.Types.String,

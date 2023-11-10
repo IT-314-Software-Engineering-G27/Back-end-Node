@@ -1,6 +1,7 @@
 const { BadRequestError } = require('../errors');
 const JobProfileModel = require('../models/jobProfile.model');
 const OrganizationModel = require('../models/organization.model');
+const JobApplicationModel = require('../models/jobApplication.model');
 const IndividualModel = require('../models/individual.model');
 
 async function listJobProfiles({ query, page, limit }) {
@@ -80,22 +81,31 @@ async function getJobProfileStatus({ individualId, jobProfileId }) {
     if (!job_application) return {
         status: 'Not Applied',
     };
-    return job_application; 
+    return job_application;
 }
 
 async function listApplications({ jobProfileId, query, page, limit }) {
-    const { job_applications } = await JobProfileModel.findById(jobProfileId, {
-        job_applications: 1,
-    }).populate({
-        path: 'job_applications',
-        select: {
-            cover_letter: 1,
-        }
-    }).exec();
-    return job_applications.filter((job_application) => {
-        if (!query) return true;
-        return String(job_application.cover_letter).test(`^${query}/i`);
-    }).slice(page * limit, (page + 1) * limit).map((job_application) => job_application._id);
+    if (!query.length) {
+        const { job_applications } = await JobProfileModel.findById(jobProfileId, {
+            job_applications: {
+                $slice: [- (page + 1) * limit - 1, limit]
+            },
+        }).exec();
+        return job_applications;
+    }
+    const job_applications = await JobApplicationModel.find(filter,
+        {
+            score: {
+                $meta: 'textScore',
+            },
+            _id: 1,
+            job_profile: 1,
+        }).find({ job_profile: jobProfileId }).sort({
+            score: {
+                $meta: 'textScore',
+            },
+        }).skip(page * limit).limit(limit).exec();
+    return job_applications.map((job_application) => job_application._id);
 }
 
 async function getJobProfile({ jobProfileId }) {
