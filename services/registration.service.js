@@ -1,4 +1,5 @@
 
+const { ForbiddenError } = require('../errors');
 const RegistrationModel = require('../models/registration.model');
 
 async function getRegistration({ registrationId }) {
@@ -13,7 +14,20 @@ async function getRegistrationBasic({ registrationId }) {
     });
 };
 
+async function updateRegistrationImage({ registrationId, fileId, host, organizationId }) {
+    const { organization } = await getRegistrationBasic({ registrationId });
+    if (!organizationId.toString() || organization.toString() !== organizationId.toString()) {
+        throw new ForbiddenError('You are not allowed to update this registration');
+    };
+    return await RegistrationModel.findByIdAndUpdate(registrationId, {
+        $addToSet: {
+            images: `${host}/files/${fileId}`,
+        },
+    });
+};
+
 module.exports = {
     getRegistration,
-    getRegistrationBasic
+    getRegistrationBasic,
+    updateRegistrationImage,
 };
