@@ -5,7 +5,6 @@ const JobProfileSchema = new Schema({
     organization: {
         type: Schema.Types.ObjectId,
         required: [true, "Organization required"],
-        unique: true,
         ref: 'Organization',
     },
     title: {
