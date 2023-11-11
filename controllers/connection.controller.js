@@ -1,4 +1,4 @@
-const { createConnection, getConnectionsForUser, getConnection, getConnectionMessages, rejectConnection, acceptConnection, deleteConnection } = require('../services/connection.service');
+const { createConnection, getConnectionsForUser, getConnection, getConnectionStatus , getConnectionMessages, rejectConnection, acceptConnection, deleteConnection } = require('../services/connection.service');
 const { createMessage } = require('../services/message.service');
 const { getUserBasic } = require('../services/user.service');
 const { ForbiddenError, BadRequestError } = require('../errors');
@@ -49,6 +49,22 @@ const ConnectionController = {
                 message: 'Connection retrieved successfully',
                 payload: {
                     connection
+                }
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+    getStatus: async (req, res, next) => {
+        const recipient = req.params.id;
+        const sender = req.user._id;
+        try {
+            const connection = await getConnectionStatus({ recipient, sender });
+            res.json({
+                message: 'Connection status retrieved successfully',
+                payload: {
+                    connection,
                 }
             });
         }

@@ -27,6 +27,31 @@ async function createConnection({ connection }) {
     };
 };
 
+async function getConnectionStatus({ recipient, sender }) {
+    const { connections } = await UserModel.findById(sender, {
+        connections: 1,
+    }).populate({
+        path: 'connections',
+        select: {
+            _id: 1,
+            status: 1,
+            from: 1,
+            to: 1,
+        },
+    }).exec();
+    const connection = connections.find((connection) => {
+        return connection.from.toString() == recipient || connection.to.toString() == recipient;
+    });
+    
+    if (!connection) return {
+        status: 'none',
+    }
+    return {
+        _id: connection._id,
+        status: connection.status,
+    }
+};
+
 async function getConnectionsForUser({ userId }) {
     const { connections } = await UserModel.findById(userId, {
         connections: 1,
@@ -94,6 +119,7 @@ async function deleteConnection({ connectionId }) {
 module.exports = {
     createConnection,
     getConnectionBasic,
+    getConnectionStatus,
     getConnectionsForUser,
     getConnectionMessages,
     getConnection,

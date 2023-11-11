@@ -6,6 +6,7 @@ const { tokenToIDMiddleware } = require('../middlewares/auth.middleware');
 
 connectionRouter.get('/', tokenToIDMiddleware, ConnectionController.list);
 connectionRouter.post('/:id', tokenToIDMiddleware, ConnectionController.create);
+connectionRouter.get('/:id/status/', tokenToIDMiddleware, ConnectionController.getStatus);
 connectionRouter.get('/:id/', tokenToIDMiddleware, connectionRoleMiddleware, ConnectionController.get);
 connectionRouter.post('/:id/accept', tokenToIDMiddleware, connectionRoleMiddleware, ConnectionController.accept);
 connectionRouter.post('/:id/reject', tokenToIDMiddleware, connectionRoleMiddleware, ConnectionController.reject);

@@ -7,11 +7,13 @@ const ConnectionSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: [true, "From is required"],
+        index: true,
     },
     to: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: [true, "To is required"],
+        index: true,
     },
     from_last_seen: {
         type: Schema.Types.Date,
