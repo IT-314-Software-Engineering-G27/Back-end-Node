@@ -43,6 +43,7 @@ const ConnectionController = {
         try {
             const role = req.user.connection.role;
             const connection = (await getConnection({ connectionId: req.params.id, role })).toJSON();
+            if (role =='to') connection.editable = true;
             const recipient = await getUserBasic({ userId: connection.recipient });
             connection.recipient = recipient;
             res.json({
