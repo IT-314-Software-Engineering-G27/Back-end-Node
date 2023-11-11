@@ -3,6 +3,7 @@ const { getJobApplicationsForIndividual, getJobApplication, getJobApplicationBas
 const JobApplicationController = {
     list: async (req, res, next) => {
         try {
+            if (!req?.user?.individual) throw new ForbiddenError('You are not authorized to access this resource');
             const jobApplications = await getJobApplicationsForIndividual({ individualId: req.user.individual });
             res.json({
                 message: "Job applications retrieved successfully",

@@ -1,4 +1,5 @@
 const LIMIT_PER_PAGE = 10;
+const { ForbiddenError } = require("../errors");
 const { listOrganizations, createOrganization, getOrganization, getOrganizationBasic, deepSearchOrganizations, getOrganizationProfile, getEvents, getJobProfiles, deleteOrganization, updateOrganization, } = require("../services/organization.service");
 const { validateOrganization, transformInputToOrganization, } = require("../services/utils/organization.util");
 
@@ -90,6 +91,7 @@ const OrganizationController = {
     },
     getJobProfiles: async (req, res, next) => {
         try {
+            if (!req?.user?.organization) throw new ForbiddenError("You are not authorized to access this resource");
             const jobProfiles = await getJobProfiles(({ organizationId: req.user.organization }));
             res.json({
                 message: "Fetched job profiles successfully",
