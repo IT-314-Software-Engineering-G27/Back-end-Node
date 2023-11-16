@@ -40,6 +40,13 @@ app.use(function (error, req, res, next) {
     console.log(error);
     res.locals.message = error.message;
     res.locals.error = req.app.get('env') === 'development' ? error : {};
+    if (error instanceof mongoose.Error.ValidationError) {
+        res.status(400).json({
+            message: error.message,
+            payload: {},
+        });
+        return;
+    }
     res.status(error.status || 500).json({
         message: error.message,
         payload: {},
