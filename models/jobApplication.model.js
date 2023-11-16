@@ -24,6 +24,8 @@ const JobApplicationSchema = new Schema({
 	},
 });
 
+JobApplicationSchema.index({ cover_letter: "text" });
+
 JobApplicationSchema.index({ individual: 1, job_profile: 1 }, { unique: true });
 
 const JobApplicationModel =

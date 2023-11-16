@@ -86,13 +86,15 @@ async function getJobProfileStatus({ individualId, jobProfileId }) {
 
 async function listApplications({ jobProfileId, query, page, limit }) {
     if (!query.length) {
-        const { job_applications } = await JobProfileModel.findById(jobProfileId, {
-            job_applications: {
-                $slice: [- (page + 1) * limit - 1, limit]
-            },
+        const job_profile = await JobProfileModel.findById(jobProfileId, {
+            job_applications: 1,
         }).exec();
-        return job_applications;
+        const job_applications = job_profile.job_applications;
+        if (!job_applications) return [];
+        if (page * limit >= job_applications.length) return [];
+        return job_applications.slice(page * limit, (page + 1) * limit);
     }
+
     const job_applications = await JobApplicationModel.find({
         $text: { $search: query, },
     },

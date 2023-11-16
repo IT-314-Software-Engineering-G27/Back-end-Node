@@ -83,8 +83,8 @@ const JobProfileController = {
     },
     getApplications: async (req, res, next) => {
         try {
-            const { page } = req.query;
-            const jobApplications = await listApplications({ jobProfileId: req.params.id, page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const { page, query } = req.query;
+            const jobApplications = await listApplications({ jobProfileId: req.params.id, query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: "Fetched applicants successfully",
                 payload: {
