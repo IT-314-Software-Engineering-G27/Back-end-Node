@@ -42,7 +42,7 @@ async function getConnectionStatus({ recipient, sender }) {
     const connection = connections.find((connection) => {
         return connection.from.toString() == recipient || connection.to.toString() == recipient;
     });
-    
+
     if (!connection) return {
         status: 'none',
     }
@@ -91,11 +91,11 @@ async function getConnection({ connectionId, role }) {
 
 async function getConnectionMessages({ connectionId, page, limit }) {
     const { messages } = await ConnectionModel.findById(connectionId, {
-        messages: {
-            $slice: [- (page + 1) * limit - 1, limit],
-        },
+        messages: 1,
     }).exec();
-    return messages;
+    if (!messages) return [];
+    if (page * limit >= messages.length) return [];
+    return messages.slice(page * limit, (page + 1) * limit);
 }
 
 async function rejectConnection({ role, connectionId }) {
