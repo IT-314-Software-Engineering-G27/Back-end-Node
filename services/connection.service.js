@@ -95,7 +95,7 @@ async function getConnectionMessages({ connectionId, page, limit }) {
     }).exec();
     if (!messages) return [];
     if (page * limit >= messages.length) return [];
-    return messages.slice(page * limit, (page + 1) * limit);
+    return messages.reverse().slice(page * limit, (page + 1) * limit);
 }
 
 async function rejectConnection({ role, connectionId }) {

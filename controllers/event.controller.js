@@ -11,16 +11,16 @@ const EventsController = {
             var events;
             switch (type) {
                 case 'past':
-                    events = await listPastEvents({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+                    events = await listPastEvents({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
                     break;
                 case 'future':
-                    events = await listFutureEvents({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+                    events = await listFutureEvents({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
                     break;
                 case 'current':
-                    events = await listCurrentEvents({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+                    events = await listCurrentEvents({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
                     break;
                 default:
-                    events = await listAllEvents({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+                    events = await listAllEvents({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
                     break;
             };
             res.json({
@@ -81,8 +81,8 @@ const EventsController = {
     listRegistrations: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const {query, page} = req.query;
-            const registrations = await listRegistrations({ eventId: id, query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const { query, page } = req.query;
+            const registrations = await listRegistrations({ eventId: id, query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: 'Fetched event registrations successfully',
                 payload: {

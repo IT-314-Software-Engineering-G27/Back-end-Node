@@ -10,8 +10,8 @@ const JobProfileController = {
     list: async (req, res, next) => {
         try {
             const { query, page, deep } = req.query;
-            const job_profiles = deep === "true" ? await deepSearchJobProfiles({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE }) :
-                await listJobProfiles({ query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const job_profiles = deep === "true" ? await deepSearchJobProfiles({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE }) :
+                await listJobProfiles({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: "Fetched job profiles successfully",
                 payload: {
@@ -84,7 +84,7 @@ const JobProfileController = {
     getApplications: async (req, res, next) => {
         try {
             const { page, query } = req.query;
-            const jobApplications = await listApplications({ jobProfileId: req.params.id, query: query ?? "", page: page ?? 0, limit: LIMIT_PER_PAGE });
+            const jobApplications = await listApplications({ jobProfileId: req.params.id, query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: "Fetched applicants successfully",
                 payload: {
