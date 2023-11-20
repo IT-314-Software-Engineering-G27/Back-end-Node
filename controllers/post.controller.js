@@ -93,7 +93,7 @@ const PostController = {
     delete: async (req, res, next) => {
         try {
             const { id } = req.params;
-            await deletePost({ postId: id });
+            await deletePost({ postId: id, userId: req.user._id });
             res.json({
                 message: 'Deleted post successfully',
                 payload: {},
