@@ -94,14 +94,16 @@ async function deletePost({ postId, userId }) {
 };
 
 async function getPostStatus({ postId, userId }) {
-  const { likes } = await PostModel.findById(postId, {
+  const { likes, user } = await PostModel.findById(postId, {
     likes: 1,
+    user: 1,
   });
 
   const isLiked = likes.filter((like) => like.toString() === userId.toString());
   return {
     isLiked: isLiked.length > 0,
     likes: likes.length,
+    editable: user.toString() === userId.toString(),
   };
 };
 
