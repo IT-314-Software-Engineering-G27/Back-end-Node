@@ -14,7 +14,7 @@ function validateUser({ user }) {
 function transformInputToUser({ user }) {
 	if (!user) throw new InternalServerError("User is not defined");
 	return {
-		email: user.email,
+		email: String(user.email).toLowerCase(),
 		password: user.password,
 		username: user.username,
 		role: user.role,

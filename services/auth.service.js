@@ -20,7 +20,7 @@ const verifyToken = ({ token }) => {
 
 const createToken = async ({ email, password }) => {
     if (secret === undefined) throw new InternalServerError("JWT_SECRET is not defined");
-    const user = await UserModel.findOne({ email }, {
+    const user = await UserModel.findOne({ email: String(email).toLowerCase() }, {
         email: 1,
         password: 1,
         role: 1,
@@ -38,7 +38,7 @@ const createToken = async ({ email, password }) => {
             user: {
                 _id: user._id,
                 email: user.email,
-                role: user.role,    
+                role: user.role,
                 individual: user.individual ?? null,
                 organization: user.organization ?? null,
             }

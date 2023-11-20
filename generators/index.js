@@ -146,6 +146,9 @@ module.exports = async () => {
     const eventIds = await Promise.all(events.map(async () => {
         const event = generateEvent();
         const { _id } = await createEvent({ event });
+        if (event.last_registration_date < Date.now()) {
+            return _id;
+        }
         const numRegistrations = faker.number.int({ min: 0, max: 20 });
         const registeredBy = faker.helpers.arrayElements(organizationIds, numRegistrations);
         await Promise.all(registeredBy.map(async (organizationId) => {
