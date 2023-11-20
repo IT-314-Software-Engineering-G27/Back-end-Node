@@ -1,6 +1,6 @@
 const LIMIT_PER_PAGE = 10;
 const { ForbiddenError } = require("../errors");
-const { listOrganizations, createOrganization, getOrganization, getOrganizationBasic, deepSearchOrganizations, getOrganizationProfile, getEvents, getJobProfiles, deleteOrganization, updateOrganization, } = require("../services/organization.service");
+const { listOrganizations, createOrganization, getOrganization, getOrganizationBasic, deepSearchOrganizations, getOrganizationProfile, getEvents, deleteOrganization, updateOrganization, } = require("../services/organization.service");
 const { validateOrganization, transformInputToOrganization, } = require("../services/utils/organization.util");
 
 const OrganizationController = {
@@ -78,11 +78,11 @@ const OrganizationController = {
     },
     getEvents: async (req, res, next) => {
         try {
-            const events = await getEvents(({ organizationId: req.user.organization }));
+            const registrations = await getEvents(({ organizationId: req.user.organization }));
             res.json({
                 message: "Fetched events successfully",
                 payload: {
-                    events: events,
+                    registrations,
                 }
             });
         } catch (error) {

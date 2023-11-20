@@ -46,7 +46,7 @@ async function createOrganization({ organization }) {
 
 async function getOrganization({ organizationId }) {
     return await OrganizationModel.findById(organizationId, {
-        events: 0,
+        registrations: 0,
     }).populate({
         path: 'user',
         select: {
@@ -101,10 +101,16 @@ async function updateOrganization({ user, organization }) {
 }
 
 async function getEvents({ organizationId }) {
-    const { events } = await OrganizationModel.findById(organizationId, {
-        events: 1,
+    const { registrations } = await OrganizationModel.findById(organizationId, {
+        registrations: 1,
+    }).populate({
+        path: 'registrations',
+        select: {
+            _id: 1,
+            event: 1,
+        },
     }).exec();
-    return events.map((event) => event.toString());
+    return registrations;
 }
 
 async function getJobProfiles({ organizationId }) {
