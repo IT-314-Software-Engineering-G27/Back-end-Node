@@ -7,7 +7,6 @@ organizationRouter.post('/', OrganizationController.create);
 organizationRouter.get('/', OrganizationController.list);
 organizationRouter.get('/profile', tokenToIDMiddleware, OrganizationController.getProfile);
 organizationRouter.get('/events', tokenToIDMiddleware, OrganizationController.getEvents);
-organizationRouter.get('/job-profiles', tokenToIDMiddleware, OrganizationController.getJobProfiles);
 organizationRouter.get('/:id', OrganizationController.get);
 organizationRouter.get('/:id/basic', OrganizationController.getBasic);
 organizationRouter.put('/', tokenToIDMiddleware, OrganizationController.update);

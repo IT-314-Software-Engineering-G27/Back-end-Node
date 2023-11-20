@@ -46,7 +46,6 @@ async function createOrganization({ organization }) {
 
 async function getOrganization({ organizationId }) {
     return await OrganizationModel.findById(organizationId, {
-        job_profiles: 0,
         events: 0,
     }).populate({
         path: 'user',

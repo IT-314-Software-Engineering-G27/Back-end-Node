@@ -89,20 +89,6 @@ const OrganizationController = {
             next(error);
         }
     },
-    getJobProfiles: async (req, res, next) => {
-        try {
-            if (!req?.user?.organization) throw new ForbiddenError("You are not authorized to access this resource");
-            const jobProfiles = await getJobProfiles(({ organizationId: req.user.organization }));
-            res.json({
-                message: "Fetched job profiles successfully",
-                payload: {
-                    jobProfiles: jobProfiles,
-                }
-            });
-        } catch (error) {
-            next(error);
-        }
-    },
     update: async (req, res, next) => {
         try {
             const { organization } = req.body;
