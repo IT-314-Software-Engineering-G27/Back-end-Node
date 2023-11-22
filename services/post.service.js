@@ -54,10 +54,8 @@ async function updatePost({ postId, post }) {
 
 async function getPostBasic({ postId }) {
   return await PostModel.findById(postId, {
-    title: 1,
-    subject: 1,
-    user: 1,
-    time: 1,
+    description: 0,
+    likes: 0,
   }).populate({
     path: 'user',
     select: {
