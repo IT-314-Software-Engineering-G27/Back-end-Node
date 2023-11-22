@@ -4,7 +4,7 @@ function generateUser({ first_name, last_name }) {
         username: faker.internet.displayName({ firstName: first_name, lastName: last_name }) + faker.string.alphanumeric({ length: 5}),
         email: faker.internet.email({ firstName: first_name, lastName: last_name, provider: 'gmail.com' }).toLowerCase(),
         password: faker.internet.password({ length: 10, prefix: 'Aa1@' }),
-        profile_picture: faker.image.avatar(),
+        profile_image: faker.image.avatar(),
         phone_number: `+${faker.number.int({ min: 1, max: 360 })} ${faker.phone.number()}`,
     };
 }
