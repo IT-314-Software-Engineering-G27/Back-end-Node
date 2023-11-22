@@ -38,16 +38,16 @@ router.use("/posts", postRouter);
 router.use("/events", eventRouter);
 router.use("/registrations",registrationRouter);
 
-router.post("/test", async (req, res, next) => {
-	try {
-		const auth_list = await generate();
-		res.json({
-			message: "Kaboom!",
-			payload: auth_list,
-		});
-	} catch (error) {
-		next(error);
-	}
-});
+// router.post("/test", async (req, res, next) => {
+// 	try {
+// 		const auth_list = await generate();
+// 		res.json({
+// 			message: "Kaboom!",
+// 			payload: auth_list,
+// 		});
+// 	} catch (error) {
+// 		next(error);
+// 	}
+// });
 
 module.exports = router;
