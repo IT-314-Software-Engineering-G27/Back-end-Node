@@ -127,7 +127,7 @@ const JobProfileController = {
     },
     delete: async (req, res, next) => {
         try {
-            await deleteJobProfile({ id: req.params.id });
+            await deleteJobProfile({ jobProfileId: req.params.id });
             res.json({
                 message: "Job profile deleted successfully",
                 payload: {}

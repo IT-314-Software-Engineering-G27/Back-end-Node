@@ -117,6 +117,29 @@ async function getJobProfile({ jobProfileId }) {
 }
 
 async function deleteJobProfile({ jobProfileId }) {
+    const { job_applications, organization } = await JobProfileModel.findById(jobProfileId, {
+        job_applications: 1,
+        organization: 1,
+    }).populate({
+        path: 'job_applications',
+        select: {
+            _id: 1,
+            individual: 1,
+        },
+    }).exec();
+    await Promise.all(job_applications.map(async (job_application) => {
+        await IndividualModel.findByIdAndUpdate(job_application.individual, {
+            $pull: {
+                job_applications: job_application._id,
+            },
+        }).exec();
+        await JobApplicationModel.findByIdAndDelete(job_application._id).exec();
+    }));
+    await OrganizationModel.findByIdAndUpdate(organization, {
+        $pull: {
+            job_profiles: jobProfileId,
+        },
+    }).exec();
     return await JobProfileModel.findByIdAndDelete(jobProfileId).exec();
 }
 
