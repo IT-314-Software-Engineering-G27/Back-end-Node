@@ -76,7 +76,7 @@ const ConnectionController = {
     listMessages: async (req, res, next) => {
         try {
             const { page } = req.query;
-            const messages = await getConnectionMessages({ connectionId: req.params.id, page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
+            const messages = await getConnectionMessages({ connectionId: req.params.id, page: Number(page) || 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: 'Messages retrieved successfully',
                 payload: {

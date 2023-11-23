@@ -7,8 +7,8 @@ const IndividualController = {
     list: async (req, res, next) => {
         try {
             const { query, page, deep } = req.query;
-            const individuals = deep === "true" ? await deepSearchIndividuals({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE }) :
-                await listIndividuals({ query: query ?? "", page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
+            const individuals = deep === "true" ? await deepSearchIndividuals({ query: query ?? "", page: Number(page) || 0, limit: LIMIT_PER_PAGE }) :
+                await listIndividuals({ query: query ?? "", page: Number(page) || 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: "Fetched individuals successfully",
                 payload: {
