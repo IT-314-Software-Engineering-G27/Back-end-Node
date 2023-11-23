@@ -1,6 +1,8 @@
 const { BadRequestError } = require('../errors');
 const { verifyToken, createToken } = require('../services/auth.service');
 
+const { validateEmail } = require("../services/utils/user.utils");
+
 const AuthController = {
     get: async (req, res, next) => {
         try {
@@ -28,6 +30,9 @@ const AuthController = {
             const { email, password } = auth;
             if (!email || !password) {
                 throw new BadRequestError("Email or password not provided");
+            }
+            if (!validateEmail(email)) {
+                throw new BadRequestError("Email is not valid");
             }
             const { token, expires_in } = await createToken({ email, password });
             res.json({

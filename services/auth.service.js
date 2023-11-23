@@ -2,9 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { BadRequestError, InternalServerError, UnauthorizedError } = require("../errors");
 const UserModel = require("../models/user.model");
-
 const secret = process.env.JWT_SECRET;
-
 const expiresIn = "2h";
 
 const verifyToken = ({ token }) => {
