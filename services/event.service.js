@@ -1,4 +1,4 @@
-const { NotFoundError, ForbiddenError } = require('../errors');
+const { NotFoundError, ForbiddenError, BadRequestError } = require('../errors');
 const EventModel = require('../models/event.model');
 const RegistrationModel = require('../models/registration.model');
 const OrganizationModel = require('../models/organization.model');
@@ -119,24 +119,32 @@ async function registerForEvent({ eventId, organizationId, registration: {
         throw new ForbiddenError('Registration for this event has ended');
     };
 
-    const registration = await RegistrationModel.create({
-        title,
-        description,
-        event: eventId,
-        organization: organizationId,
-        images,
-    });
-    await EventModel.findByIdAndUpdate(eventId, {
-        $push: {
-            registrations: registration._id,
-        },
-    }).exec();
-    await OrganizationModel.findByIdAndUpdate(organizationId, {
-        $push: {
-            registrations: registration._id,
-        },
-    }).exec();
-    return registration;
+    try {
+        const registration = await RegistrationModel.create({
+            title,
+            description,
+            event: eventId,
+            organization: organizationId,
+            images,
+        });
+        await EventModel.findByIdAndUpdate(eventId, {
+            $push: {
+                registrations: registration._id,
+            },
+        }).exec();
+        await OrganizationModel.findByIdAndUpdate(organizationId, {
+            $push: {
+                registrations: registration._id,
+            },
+        }).exec();
+        return registration;
+    }
+    catch (error) {
+        if (error.code === 11000) {
+            throw new BadRequestError("You are already registered for this event");
+        }
+        throw error;
+    }
 };
 
 async function deregisterForEvent({ eventId, organizationId }) {
