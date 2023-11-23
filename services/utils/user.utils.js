@@ -43,5 +43,6 @@ function validatePassword(password) {
 module.exports = {
 	validateUser,
 	validateEmail,
+	validatePassword,
 	transformInputToUser,
 };

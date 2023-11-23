@@ -1,6 +1,6 @@
 const { createReset, applyReset } = require("../services/reset.service");
 const { BadRequestError } = require("../errors");
-
+const { validatePassword } = require("../services/utils/user.utils");
 const ResetController = {
 	create: async (req, res, next) => {
 		try {
@@ -8,7 +8,7 @@ const ResetController = {
 			res.json({
 				message: "Reset created successfully",
 				payload: {
-					 reset,
+					reset,
 				},
 			});
 		} catch (error) {
@@ -21,6 +21,9 @@ const ResetController = {
 			const { otp, password } = req.body;
 			if (!otp || !password) {
 				throw new BadRequestError("OTP and password are required");
+			}
+			if (!validatePassword(password)) {
+				throw new BadRequestError("Password is not valid");
 			}
 			const user = await applyReset({
 				otp,
