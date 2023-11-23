@@ -8,7 +8,7 @@ const PostController = {
     list: async (req, res, next) => {
         try {
             const { page, query, deep } = req.query;
-            const posts = deep === "true" ? await deepSearchPosts({ query: query ?? '', page: Number(page) ?? 0, limit: LIMIT_PER_PAGE }) : await listPosts({ query: query ?? '', page: Number(page) ?? 0, limit: LIMIT_PER_PAGE });
+            const posts = deep === "true" ? await deepSearchPosts({ query: query ?? '', page: Number(page) || 0, limit: LIMIT_PER_PAGE }) : await listPosts({ query: query ?? '', page: Number(page) || 0, limit: LIMIT_PER_PAGE });
             res.json({
                 message: 'Fetched posts successfully',
                 payload: {

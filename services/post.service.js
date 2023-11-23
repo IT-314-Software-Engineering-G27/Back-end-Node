@@ -3,13 +3,28 @@ const PostModel = require('../models/post.model');
 const UserModel = require('../models/user.model');
 
 async function listPosts({ query, page, limit }) {
-  return (await PostModel.find({
-    $or: [
-      { title: { $regex: `${query}`, $options: 'i', }, },
-    ]
-  }, {
-    _id: 1,
-  }).sort({ likes: -1 }).skip(page * limit).limit(limit).exec()).map((post) => post._id);
+  return (await PostModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { title: { $regex: `${query}`, $options: 'i' } }
+        ]
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        likesCount: { $size: '$likes' }
+      }
+    },
+    {
+      $sort: { likesCount: -1 }
+    },
+    {
+      $skip: page * limit
+    },
+    { $limit: limit }
+  ]).exec()).map((post) => post._id);
 };
 
 async function deepSearchPosts({ query, page, limit }) {
