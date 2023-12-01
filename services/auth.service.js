@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { BadRequestError, InternalServerError, UnauthorizedError } = require("../errors");
+const { BadRequestError, InternalServerError, UnauthorizedError, ForbiddenError } = require("../errors");
 const UserModel = require("../models/user.model");
 const secret = process.env.JWT_SECRET;
 const expiresIn = "2h";
@@ -25,6 +25,8 @@ const createToken = async ({ email, password }) => {
         individual: 1,
         organization: 1,
     });
+
+    if (!user.password) throw new ForbiddenError("Account is not yet activated");
 
     if (user === null) throw new BadRequestError("User does not exist");
 

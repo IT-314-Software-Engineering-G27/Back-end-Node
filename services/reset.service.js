@@ -24,10 +24,10 @@ async function createReset({ email }) {
 		await transporter.sendMail({
 			from: `${process.env.NODEMAILER_EMAIL}`,
 			to: email,
-			subject: "StartApp Password Reset",
-			html: `<p>Use this OTP to reset your password: <b>${otp}</b></p>
+			subject: "StartApp Password Reset/Verification",
+			html: `<p>Use this OTP to reset set a new password: <b>${otp}</b></p>
         <p>This OTP will expire in 1 hour</p>
-        <p>Password Reset Link: <a href="https://startapp-for-startups-g27.vercel.app/password-reset/${reset._id}">Click Here</a></p>`,
+        <p>Follow this Link: <a href="https://startapp-for-startups-g27.vercel.app/password-reset/${reset._id}">Click Here </a></p>`,
 		});
 		return reset;
 	}

@@ -1,13 +1,13 @@
 const { BadRequestError } = require("../errors");
 const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
-const { removeFile } = require("./file.service");
+const { createReset } = require("./reset.service");
 
 async function createUser({ user }) {
-	if (!user.password) throw new BadRequestError("Password is required");
-	user.password = await bcrypt.hash(user.password, 10);
 	try {
-		return await UserModel.create(user);
+		const newUser = await UserModel.create(user);
+		await createReset({ email: newUser.email });
+		return newUser;
 	} catch (error) {
 		if (error.code === 11000)
 			throw new BadRequestError("User already exists");
