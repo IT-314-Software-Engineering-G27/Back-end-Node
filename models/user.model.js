@@ -12,7 +12,6 @@ const UserSchema = new Schema({
 	},
 	password: {
 		type: Schema.Types.String,
-		required: [true, "Password is required"],
 		minlength: 8,
 		maxlength: 1024,
 	},
